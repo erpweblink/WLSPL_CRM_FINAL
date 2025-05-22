@@ -8,6 +8,7 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pag
 using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages.Manage;
 using WLSPL_CRM.Models;
 using WLSPL_CRM_2.Models;
+using static System.Net.Mime.MediaTypeNames;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace WLSPL_CRM_2.repository
@@ -16,9 +17,10 @@ namespace WLSPL_CRM_2.repository
     {
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _hostingEnvironment;
-
-        public UserRegistration(IConfiguration configuration, IWebHostEnvironment hostingEnvironment)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public UserRegistration(IConfiguration configuration, IWebHostEnvironment hostingEnvironment, IHttpContextAccessor httpContextAccessor)
         {
+            _httpContextAccessor = httpContextAccessor;
             _configuration = configuration;
             _hostingEnvironment = hostingEnvironment;
         }
@@ -312,6 +314,10 @@ namespace WLSPL_CRM_2.repository
                 parameters.Add("@Action", "UpdateUserDetails");
                 parameters.Add("@Result", dbType: DbType.Int32, direction: ParameterDirection.Output);
                 await connection.ExecuteAsync("SP_User", parameters, commandType: CommandType.StoredProcedure);
+                string FullName = string.IsNullOrWhiteSpace((user.FirstName ?? "") + (user.LastName ?? "")) ? "No Name" : $"{user.FirstName ?? ""} {user.LastName ?? ""}".Trim();
+                string image = user?.PhotoPath?? "/assets/images/users/avatar-1.jpg".ToString();
+                _httpContextAccessor.HttpContext.Session.SetString("Profile", image);
+                _httpContextAccessor.HttpContext.Session.SetString("FullName", FullName);
                 int isSuccess = parameters.Get<int>("@Result");
                 return isSuccess;
             }
