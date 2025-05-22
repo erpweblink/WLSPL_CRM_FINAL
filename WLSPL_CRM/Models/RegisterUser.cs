@@ -46,6 +46,19 @@ namespace WLSPL_CRM_2.Models
 
         [NotMapped]
         public int? pendingCount { get; set; }
+
+        [NotMapped]
+        public string? SupervisorID { get; set; }
+        [NotMapped]
+        public string? SupervisorFullName { get; set; }
+        [NotMapped]
+        public string? ManagerID { get; set; }
+        [NotMapped]
+        public string? ManagerFulltName { get; set; }
+        [NotMapped]
+        public string? ReportingID { get; set; }
+        [NotMapped]
+        public string? ReportingFullName { get; set; }
     }
 
 

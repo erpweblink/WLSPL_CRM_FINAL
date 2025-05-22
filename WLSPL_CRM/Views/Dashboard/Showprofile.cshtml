@@ -1,7 +1,7 @@
 ﻿@model WLSPL_CRM_2.Models.RegisterUser
 @{
-    ViewData["Title"] = "Showprofile";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+	ViewData["Title"] = "Showprofile";
+	Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -56,21 +56,36 @@
 							<input asp-for="FirstName" class="form-control" />
 							<span asp-validation-for="FirstName" class="text-danger"></span>
 						</div>
-
 						<!-- Last Name -->
 						<div class="form-group mb-3">
 							<label asp-for="LastName" class="form-label"> Last Name</label>
 							<input asp-for="LastName" class="form-control" />
 							<span asp-validation-for="LastName" class="text-danger"></span>
 						</div>
-
 						<!-- Username -->
 						<div class="form-group mb-3">
 							<label asp-for="UserName" class="form-label">User Name</label>
 							<input asp-for="UserName" class="form-control" />
 							<span asp-validation-for="UserName" class="text-danger"></span>
 						</div>
+						@if (!string.IsNullOrEmpty(Model.ReportingID))
+						{
+							<div class="form-group mb-3">
+								<label asp-for="ReportingFullName" class="form-label">Reporting Person</label>
+								<input asp-for="ReportingFullName" class="form-control" readonly />
+								<span asp-validation-for="ReportingFullName" class="text-danger"></span>
+							</div>
+						}
 
+						@if (!string.IsNullOrEmpty(Model.SupervisorID))
+						{
+
+							<div class="form-group mb-3">
+								<label asp-for="SupervisorFullName" class="form-label">Team Lead Name</label>
+								<input asp-for="SupervisorFullName" class="form-control" readonly />
+								<span asp-validation-for="SupervisorFullName" class="text-danger"></span>
+							</div>
+						}
 						<!-- Password -->
 						<div class="form-group mb-3">
 							<label asp-for="Password" class="form-label"></label>
@@ -81,17 +96,29 @@
 								<label class="form-check-label" for="showPassword">Show Password</label>
 							</div>
 						</div>
-
 						<!-- Profile Photo Upload -->
 						<div class="form-group mb-3">
 							<label asp-for="File" class="form-label">Upload Profile Photo</label>
 							<input asp-for="File" type="file" class="form-control" id="fileInput" accept="image/*" />
 							<span asp-validation-for="File" class="text-danger"></span>
-							<div class="mt-3">
-								<img id="imagePreview" src="#" alt="Image Preview" style="display: none; max-width: 150px; max-height: 150px; border-radius: 5px;" />
+							<div class="row">
+								@if (!string.IsNullOrEmpty(Model.PhotoPath))
+								{
+									<div class="col-md-6">
+										<input type="hidden" asp-for="PhotoPath" />
+										<div class="mt-2">
+											<label>Current Profile Photo:</label><br />
+											<img src="@Model.PhotoPath" alt="Profile Photo" style="max-width: 150px; max-height: 150px; border-radius: 5px;" />
+										</div>
+									</div>
+								}
+								<div class="col-md-6">
+									<div class="mt-3">
+										<img id="imagePreview" src="#" alt="Image Preview" style="display: none; max-width: 150px; max-height: 150px; border-radius: 5px;" />
+									</div>
+								</div>
 							</div>
 						</div>
-
 					</div>
 
 					<div class="col-md-6">
@@ -115,6 +142,15 @@
 							<input asp-for="MobileNo" class="form-control" />
 							<span asp-validation-for="MobileNo" class="text-danger"></span>
 						</div>
+						@if (!string.IsNullOrEmpty(Model.ManagerID))
+						{
+							<div class="form-group mb-3">
+								<label asp-for="ManagerFulltName" class="form-label">Manager Name</label>
+								<input asp-for="ManagerFulltName" class="form-control" readonly />
+								<span asp-validation-for="ManagerFulltName" class="text-danger"></span>
+							</div>
+							<div class="class=" form-group mb-3" style="margin-top: 113px;"></div>
+						}
 
 						<!-- Confirm Password -->
 						<div class="form-group mb-3">
@@ -125,17 +161,6 @@
 								<input type="checkbox" class="form-check-input" id="showPassword1" onclick="toggleConfirmPassword()">
 								<label class="form-check-label" for="showPassword1">Show Password</label>
 							</div>
-						</div>
-						<div class="form-group mb-3">
-							@* Show current photo if available *@
-							@if (!string.IsNullOrEmpty(Model.PhotoPath))
-							{
-								<input type="hidden" asp-for="PhotoPath" />
-								<div class="mt-2">
-									<label>Current Profile Photo:</label><br />
-									<img src="@Model.PhotoPath" alt="Profile Photo" style="max-width: 150px; max-height: 150px; border-radius: 5px;" />
-								</div>
-							}
 						</div>
 					</div>
 				</div>
