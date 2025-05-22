@@ -1,0 +1,250 @@
+﻿@model List<WLSPL_CRM_2.Models.Services>
+@{
+    ViewData["Title"] = "Getlist";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var departments = new[] {
+        new { Name = "WEB_DEVLOPMENT", Color = "#296600", Match = new[] { "WEB_DEVLOPMENT" } },
+        new { Name = "SEO", Color = "tomato", Match = new[] { "SEO" } },
+        new { Name = "SMO", Color = "#00ada3", Match = new[] { "SMO" } },
+        new { Name = "Software", Color = "brown", Match = new[] { "Software" } },
+        new { Name = "Graphics Design/Video Editing", Color = "grey", Match = new[] { "Graphics", "Graphics Design", "Video Editing", "Graphics Design/Video Editing" } }
+    };
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" />
+    <link href="~/assets/css/app.min.css" rel="stylesheet" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet" />
+    <style>
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            color: transparent;
+            text-align: center;
+        }
+
+        .page-subtitle {
+            font-size: 1rem;
+            color: #555;
+            font-style: italic;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .service-card {
+            cursor: pointer;
+        }
+
+        .department-header {
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-4">
+        <div class="text-center mb-4">
+            <h1 class="page-title">Our Packages</h1>
+            <p class="page-subtitle">Explore our services and choose the best plan for your business needs</p>
+        </div>
+
+        <div class="text-center mb-3">
+            <button class="btn btn-outline-primary" id="showAllBtn">Show All Services</button>
+        </div>
+
+        <div class="row">
+            @foreach (var dept in departments)
+            {
+                var deptServices = Model.Where(s => dept.Match.Contains(s.Department)).ToList();
+                var colSize = (dept.Name == "WEB_DEVLOPMENT" || dept.Name == "Graphics Design/Video Editing") ? "col-md-3 col-sm-6 col-12" : "col-md-2 col-sm-6 col-12";
+
+                <div class="@colSize">
+                    <div class="card mb-3">
+                        <div class="col-auto" style="height: 70px; background-color: @dept.Color;">
+                            <h4 class="card-title text-white text-center mt-3 department-header" data-dept="@dept.Name">
+                                <i class="fas @GetIconClass(dept.Name)" style="margin-right: 8px;"></i>
+                                @dept.Name
+                            </h4>
+                        </div>
+                    </div>
+
+                    <div class="card-header">
+                        <div class="row">
+                            @foreach (var services in deptServices)
+                            {
+                                <div class="col-12">
+                                    <div class="card mb-3 border service-card"
+                                         data-id="@services.ID"
+                                         data-service="@services.ServicesDesc"
+                                         data-price="@services.Price"
+                                         data-department="@services.Department"
+                                         data-parent-department="@dept.Name">
+                                        <div class="card-body">
+                                            <div class="service-info">
+                                                <div class="service-item">
+                                                    <strong>Service= </strong>
+                                                    <span>@services.ServicesDesc</span>
+                                                </div>
+                                                <div class="price-item">
+                                                    <strong>Price= </strong>
+                                                    <span>@services.Price Rs</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="serviceDetailModal" tabindex="-1" aria-labelledby="serviceDetailModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header text-white" id="modalHeader">
+                    <h5 class="modal-title" id="serviceDetailModalLabel">Service Details</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="serviceForm" asp-action="UpdateDetails">
+                        <div class="row mb-3">
+                            <div class="col-md-6 col-12">
+                                <label class="form-label fw-bold">Department</label>
+                                <input type="text" id="modalDepartment" name="Department" class="form-control" readonly />
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <label class="form-label fw-bold">Service</label>
+                                <input type="text" id="modalServiceName" name="ServicesDesc" class="form-control" />
+                            </div>
+                            <div class="col-md-6 col-12">
+                                <label class="form-label fw-bold">Price</label>
+                                <input type="number" id="modalServicePrice" name="Price" class="form-control" />
+                            </div>
+                            <input type="hidden" id="modalServiceId" name="Id" />
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="submit" id="updateServiceBtn" class="btn btn-success">
+                                <i class="fas fa-edit me-1"></i> Save Changes
+                            </button>
+                            <button type="button" id="deleteServiceBtn" class="btn btn-danger">
+                                <i class="fas fa-trash-alt me-1"></i> Delete
+                            </button>
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                <i class="fas fa-times me-1"></i> Close
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        const departmentColors = {
+            "WEB_DEVLOPMENT": "#296600",
+            "SEO": "tomato",
+            "SMO": "#00ada3",
+            "Software": "brown",
+            "Graphics Design/Video Editing": "grey"
+        };
+
+        $(document).ready(function () {
+            // Initially hide all service cards
+            $('.service-card').closest('.col-12').hide();
+
+            // Open modal when clicking a service card
+            $('.service-card').on('click', function () {
+                const id = $(this).data('id');
+                const service = $(this).data('service');
+                const price = $(this).data('price');
+                const department = $(this).data('department');
+
+                $('#modalServiceId').val(id);
+                $('#modalServiceName').val(service);
+                $('#modalServicePrice').val(price);
+                $('#modalDepartment').val(department);
+
+                const bgColor = departmentColors[department] || '#343a40';
+                $('#modalHeader').css('background-color', bgColor);
+
+                const modal = new bootstrap.Modal(document.getElementById('serviceDetailModal'));
+                modal.show();
+            });
+
+            // Delete service
+            $('#deleteServiceBtn').on('click', function () {
+                const serviceId = $('#modalServiceId').val();
+
+                if (confirm("Are you sure you want to delete this service?")) {
+                    $.ajax({
+                        url: '/Services/DeleteService',
+                        type: 'POST',
+                        data: { id: serviceId },
+                        success: function () {
+                            location.reload();
+                        },
+                        error: function () {
+                            alert("Error deleting service.");
+                        }
+                    });
+                }
+            });
+
+            // Show only the selected department's services
+            $('.department-header').on('click', function () {
+                const selectedDept = $(this).data('dept');
+
+                $('.service-card').each(function () {
+                    const cardDept = $(this).data('parent-department');
+                    if (cardDept === selectedDept) {
+                        $(this).closest('.col-12').show();
+                    } else {
+                        $(this).closest('.col-12').hide();
+                    }
+                });
+            });
+
+            // Show all services when the "Show All" button is clicked
+            $('#showAllBtn').on('click', function () {
+                $('.service-card').closest('.col-12').show();
+            });
+        });
+    </script>
+</body>
+
+@functions {
+    public string GetIconClass(string deptName)
+    {
+        return deptName switch
+        {
+            "WEB_DEVLOPMENT" => "fa-laptop-code",
+            "SEO" => "fa-search",
+            "SMO" => "fa-share-alt",
+            "Software" => "fa-cogs",
+            "Graphics Design/Video Editing" => "fa-video",
+            _ => "fa-question"
+        };
+    }
+}
+</html>
+

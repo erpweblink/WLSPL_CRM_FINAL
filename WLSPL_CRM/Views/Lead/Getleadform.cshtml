@@ -1,0 +1,250 @@
+﻿@model WLSPL_CRM_2.Models.LeadGenration
+@{
+    ViewData["Title"] = "Getleadform";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+@if (ViewBag.Leads == null)
+{
+    <form method="post" asp-action="SubmitDeatils">
+        <!-- Basic Info Section -->
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <h4 class="card-title">ADD LEAD </h4>
+                        </div>
+                        <div class="col-md-2">
+                            <a class="btn btn-primary" asp-controller="Lead" asp-action="Getleadlist">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-text">Lead List</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <label for="leadCode" class="form-label">Lead code :</label>
+                        <input class="form-control" type="text" name="leadCode" readonly value="@ViewBag.Leadcode" />
+
+                        <small asp-validation-for="leadCode" class="text-danger"></small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="CustomerName" class="form-label">Customer Name :</label>
+                        <input type="text" class="form-control" id="CompanyName" onkeyup="GetCompany(this.value)" autocomplete="off" placeholder="Enter company name" />
+                        <small asp-validation-for="CompanyName" class="text-danger"></small>
+                        <div id="suggestion-list" class="suggestion-list" style="display:none;"></div>
+                        <input asp-for="CompanyName" type="hidden" id="CompanyId">
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <label for="MobileNo" class="form-label">Mobile NO. :</label>
+                        <input class="form-control" type="tel" placeholder="Enter MobileNo" name="Mobile" value="@ViewBag.Leads?.Mobile" />
+                        <small asp-validation-for="Mobile" class="text-danger"></small>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="Email" class="form-label">Email ID :</label>
+                        <input class="form-control" type="text" placeholder="Email" name="Email" value="@ViewBag.Leads?.Email" />
+                        <small asp-validation-for="Email" class="text-danger"></small>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <label for="Requirements" class="form-label">Requirements :</label>
+                        <textarea class="form-control" name="Requirements" rows="4">@ViewBag.Leads?.Requirements</textarea>
+                        <small asp-validation-for="Requirements" class="text-danger"></small>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="Source" class="form-label">Source :</label>
+                        <input class="form-control" type="text" placeholder="Enter Source" name="Source" value="@ViewBag.Leads?.Source" />
+                        <small asp-validation-for="Source" class="text-danger"></small>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <label for="City" class="form-label">City :</label>
+                        <input class="form-control" type="text" placeholder="Enter City" name="City" value="@ViewBag.Leads?.City" />
+                        <small asp-validation-for="City" class="text-danger"></small>
+                    </div>
+                </div>
+
+
+
+                <!-- Submit Button -->
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+else
+{
+    <form method="post" asp-action="UpdateRequest">
+        <div class="card">
+            <div class="card-body">
+                <div class="row align-items-center">
+                    <div class="row">
+                        <div class="col-md-10">
+                            <h4 class="card-title">UPDATE LEAD </h4>
+                        </div>
+                        <div class="col-md-2">
+                            <a class="btn btn-primary" asp-controller="Lead" asp-action="Getleadlist">
+                                <div class="d-flex align-items-center">
+                                    <span class="nav-link-text">Lead List</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+
+                </div>  <hr />
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <label for="leadCode" class="form-label">Lead code</label>
+                        <input class="form-control" type="text" name="leadCode" readonly value="@ViewBag.Leads?.Leadcode" />
+                        <input type="hidden" id="ID" name="ID" value="@ViewBag.Leads?.ID" />
+                        <small asp-validation-for="leadCode" class="text-danger"></small>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label for="CustomerName" class="form-label">Customer Name</label>
+                        <input type="text" class="form-control" id="CompanyName" onkeyup="GetCompany(this.value)" autocomplete="off" placeholder="Enter company name" value="@ViewBag.Leads?.CompanyName" />
+                        <small asp-validation-for="CompanyName" class="text-danger"></small>
+                        <div id="suggestion-list" class="suggestion-list" style="display:none;"></div>
+                        <input asp-for="CompanyName" type="hidden" id="CompanyId" value="@ViewBag.Leads?.CompanyName">
+                    </div>
+                </div>
+
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <label for="MobileNo" class="form-label">Mobile NO.</label>
+                        <input class="form-control" type="tel" placeholder="Enter MobileNo" name="Mobile" value="@ViewBag.Leads?.Mobile" />
+                        <small asp-validation-for="Mobile" class="text-danger"></small>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="Email" class="form-label">Email_ID</label>
+                        <input class="form-control" type="text" placeholder="Email" name="Email" value="@ViewBag.Leads?.Email" />
+                        <small asp-validation-for="Email" class="text-danger"></small>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <label for="Requirements" class="form-label">Requirements</label>
+                        <textarea class="form-control" name="Requirements" rows="4">@ViewBag.Leads?.Requirements</textarea>
+                        <small asp-validation-for="Requirements" class="text-danger"></small>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="Source" class="form-label">Source</label>
+                        <input class="form-control" type="text" placeholder="Enter Source" name="Source" value="@ViewBag.Leads?.Source" />
+                        <small asp-validation-for="Source" class="text-danger"></small>
+                    </div>
+                </div>
+
+                <div class="row mb-2">
+                    <div class="col-md-6">
+                        <label for="City" class="form-label">City</label>
+                        <input class="form-control" type="text" placeholder="Enter City" name="City" value="@ViewBag.Leads?.City" />
+                        <small asp-validation-for="City" class="text-danger"></small>
+                    </div>
+                </div>
+
+
+
+                <!-- Submit Button -->
+                <div class="d-flex justify-content-center">
+                    <button type="submit" class="btn btn-primary">Update</button>
+                </div>
+            </div>
+        </div>
+    </form>
+}
+@section Scripts {
+    <!-- Include SweetAlert2 Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.9/dist/sweetalert2.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        .suggestion-list {
+            position: absolute;
+            z-index: 1000;
+            background-color: #fff;
+            max-height: 150px;
+            overflow-y: auto;
+            width: 300px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        }
+
+        .suggestion-item {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+            .suggestion-item:hover {
+                background-color: #f0f0f0;
+            }
+    </style>
+    <script>
+        $(document).ready(function () {
+            function GetCompany(name) {
+                if (name.length > 1) {
+                    $.ajax({
+                        url: '@Url.Action("SearchCompany", "Lead")',
+                        type: 'POST',
+                        data: { name: name },
+                        success: function (response) {
+                            debugger
+                            var list = $('#suggestion-list');
+                            list.empty();
+
+                            if (response.length > 0) {
+                                response.forEach(function (item) {
+                                    list.append('<div class="suggestion-item" data-value="' + item.value + '">' + item.text + '</div>');
+                                });
+                                list.show();
+                            } else {
+                                list.hide();
+                            }
+                        },
+                        error: function (xhr, status, error) {
+                            alert("An error occurred: " + error);
+                        }
+                    });
+                } else {
+                    $('#suggestion-list').hide();
+                }
+            }
+
+            // Attach to window so it's accessible from inline events
+            window.GetCompany = GetCompany;
+
+            $(document).on('click', '.suggestion-item', function () {
+                var selected = $(this).text();
+                $('#CompanyName').val(selected);
+                $('#CompanyId').val(selected);
+                $('#CompanyName').text(selected);
+                $('#suggestion-list').hide();
+            });
+
+            $(document).click(function (e) {
+                if (!$(e.target).closest('#CompanyName, #suggestion-list').length) {
+                    $('#suggestion-list').hide();
+                }
+            });
+             
+        });
+           
+    </script>
+
+}

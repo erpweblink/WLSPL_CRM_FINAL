@@ -1,0 +1,141 @@
+﻿@{
+	Layout = null;
+}
+
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-startbar="light" data-bs-theme="light">
+
+
+<!-- Mirrored from mannatthemes.com/rizz/default/auth-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 26 Oct 2024 09:37:50 GMT -->
+<head>
+
+
+	<meta charset="utf-8" />
+	<title>WebLink Services Pvt.Ltd</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+	<meta content="" name="author" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+	<!-- App favicon -->
+	<link rel="shortcut icon" href="~/assets/images/WLSPL_MAIN_LOGO.png" style="background:black">
+
+
+	<!-- App css -->
+	<link href="~/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+	<link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+	<link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" />
+	<script>
+		function togglePassword() {
+		  const passwordInput = document.getElementById("userpassword");
+		  passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+		}
+	</script>
+</head>
+
+
+<!-- Top Bar Start -->
+<body>
+	<div class="container-xxl">
+		<div class="row vh-100 d-flex justify-content-center">
+			<div class="col-12 align-self-center">
+				<div class="card-body">
+					<div class="row">
+						<div class="col-lg-4 mx-auto">
+							<div class="card">
+								<div class="card-body p-0 bg-black auth-header-box rounded-top">
+									<div class="text-center p-3">
+										<a href="index.html" class="logo logo-admin">
+											<img src="~/assets/images/WLSPL_MAIN_LOGO.png" height="50" alt="logo" class="auth-logo">
+										</a>
+									</div>
+								</div>
+								<div class="card-body pt-0">
+									<form class="my-4" method="get" asp-action="Getlogindetails">
+										<div class="form-group mb-2">
+											<label class="form-label" for="username">Username</label>
+											<input type="text" class="form-control" id="username" name="username" placeholder="Enter username">
+										</div><!--end form-group-->
+
+										<div class="form-group">
+											<label class="form-label" for="userpassword">Password</label>
+											<input type="password" class="form-control" name="password" id="userpassword" placeholder="Enter password">
+											<div class="form-check mt-2" style="font-size: smaller;">
+												<input type="checkbox" class="form-check-input" id="showPassword" onclick="togglePassword()">
+												<label class="form-check-label" for="showPassword">Show Password</label>
+											</div>
+										</div><!--end form-group-->
+
+										<div class="form-group row mt-3">
+											<div class="col-sm-6">
+											@* 	<div class="form-check form-switch form-switch-success">
+													<input class="form-check-input" type="checkbox" id="customSwitchSuccess">
+													<label class="form-check-label" for="customSwitchSuccess">Remember me</label>
+												</div> *@
+											</div><!--end col-->
+											<div class="col-sm-6 text-end">
+												<a href="/Login/ForgetPassword" class="text-muted font-13"><i class="dripicons-lock"></i> Forgot password?</a>
+											</div><!--end col-->
+										</div><!--end form-group-->
+
+										<div class="form-group mb-0 row">
+											<div class="col-12">
+												<div class="d-grid mt-3">
+													<input type="submit" class="btn btn-primary" value="Log In" onclick="sendLoginRequest()">
+												</div>
+											</div><!--end col-->
+										</div> <!--end form-group-->
+									</form><!--end form-->
+									<div class="text-center  mb-2">
+										<p class="text-muted">
+											Don't have an account ?
+											<a asp-controller="Login" asp-action="GetResterForm" class="text-primary ms-2">Free Register</a>
+									</div>
+									<div class="d-flex justify-content-center">
+										<a href="#" class="d-flex justify-content-center align-items-center thumb-md bg-blue-subtle text-blue rounded-circle me-2">
+											<i class="fab fa-facebook align-self-center"></i>
+										</a>
+										<a href="#" class="d-flex justify-content-center align-items-center thumb-md bg-info-subtle text-info rounded-circle me-2">
+											<i class="fab fa-twitter align-self-center"></i>
+										</a>
+										<a href="#" class="d-flex justify-content-center align-items-center thumb-md bg-danger-subtle text-danger rounded-circle">
+											<i class="fab fa-google align-self-center"></i>
+										</a>
+									</div>
+								</div><!--end card-body-->
+							</div><!--end card-->
+						</div><!--end col-->
+					</div><!--end row-->
+				</div><!--end card-body-->
+			</div><!--end col-->
+		</div><!--end row-->
+	</div><!-- container -->
+</body>
+<!--end body-->
+<!-- Mirrored from mannatthemes.com/rizz/default/auth-login.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 26 Oct 2024 09:37:50 GMT -->
+</html>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0-crypto-js.min.js"></script>
+
+
+<script>
+	function encryptData(username, password) {
+		debugger;
+		var key = 'Patil123';
+		var encryptedUsername = CryptoJS.AES.encrypt(username, key, { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 }).toString();
+		var encryptedPassword = CryptoJS.AES.encrypt(password, key, { mode: CryptoJS.mode.ECB, padding: CryptoJS.pad.Pkcs7 }).toString();
+		console.encryptedUsername;
+
+
+	}
+
+	function sendLoginRequest() {
+		debugger;
+		var username = document.getElementById('username').value;
+		var password = document.getElementById('userpassword').value;
+
+		var encryptedData = encryptData(username, password);
+
+	}
+
+</script>

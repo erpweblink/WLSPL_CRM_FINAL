@@ -1,0 +1,275 @@
+﻿@model List<WLSPL_CRM_2.Models.Deal>
+
+@{
+	ViewData["Title"] = "GetCompanyForm";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+	.custom-rounded-box {
+		border-radius: 15px; /* Adjust as needed */
+		overflow: hidden; /* Ensures child elements don’t break the border radius */
+	}
+</style>
+
+<div class="container mt-4">
+	<!-- Page Heading -->
+	<h2>Deal Details</h2>
+	<br />
+	<div class="row">
+		@{
+			var stages = new[] { "NEW", "Qualified", "Proposition", "Won" };
+		}
+
+		@foreach (var stage in stages)
+		{
+			var stageDeals = Model.Where(d => d.Stage == stage)
+			.OrderBy(d => d.Amount) // Sorting deals in ascending order
+			.ToList();
+
+			<div class="col-md-3">
+				<div class="card custom-rounded-box position-relative">
+					<div class="col-auto rounded" style="height: 70px; background-color: @(stage == "NEW" ? "#db4273" : stage == "Qualified" ? "#007bff" : stage == "Proposition" ? "#d75c13" : "#28a745"); position: relative;">
+						<h4 class="card-title text-white text-center mt-3">
+							@stage @stageDeals.Count
+						</h4>
+
+						<!-- Plus Button -->
+						<button class="btn btn-light btn-sm position-absolute open-modal"
+								style="top: 19px; right: 14px; border-radius: 50%;"
+								data-bs-toggle="modal"
+								data-bs-target="#myModal"
+								data-stage="@stage">
+							<strong>+</strong>
+						</button>
+
+					</div>
+				</div>
+
+				@foreach (var deal in stageDeals)
+				{
+					<div class="card mb-3 border deal-card"
+						 data-company="@deal.Company"
+						 data-dealowner="@deal.DealOwner"
+						 data-stage="@deal.Stage"
+						 data-probability="@deal.Probability"
+						 data-Contactfrom="@deal.ContactFrom"
+						 data-Email="@deal.Email"
+						 data-expectedrevenue="@deal.ExpectedRevenue"
+						 data-amount="@deal.Amount">
+						<div class="card-body">
+							<p>
+								<strong>@deal.Company</strong><br />
+								<strong>@deal.DealOwner</strong>
+							</p>
+							<p style="margin-bottom: 0;">
+								<strong>₹ @deal.Amount.ToString("N2")</strong>
+							</p>
+						</div>
+					</div>
+				}
+			</div>
+		}
+	</div>
+</div>
+
+<!-- Bootstrap Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div class="modal-dialog modal-xl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="exampleModalLabel">Enter Deal Details</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<!-- Form -->
+				<form id="dealForm">
+					<div class="row">
+						<div class="col-md-6">
+							<label class="form-label">Company</label>
+							<input type="text" class="form-control" id="Company" name="Company" required>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Deal Owner</label>
+							<input type="text" class="form-control" id="DealOwner" name="DealOwner" required>
+						</div>
+					</div>
+
+					<div class="row mt-3">
+						<div class="col-md-6">
+							<label class="form-label">Stage</label>
+							<input type="text" class="form-control" id="Stage" name="Stage" required>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Probability (%)</label>
+							<input type="text" class="form-control" id="Probability" name="Probability" required>
+						</div>
+					</div>
+
+					<div class="row mt-3">
+						<div class="col-md-6">
+							<label class="form-label">Contact From</label>
+							<input type="text" class="form-control" id="Contactfrom" name="Contactfrom" required>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Email</label>
+							<input type="text" class="form-control" id="Email" name="Email" required>
+						</div>
+					</div>
+
+					<div class="row mt-3">
+						<div class="col-md-6">
+							<label class="form-label">Expected Revenue</label>
+							<input type="number" class="form-control" id="ExpectedRevenue" name="ExpectedRevenue" required>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Amount</label>
+							<input type="number" class="form-control" id="Amount" name="Amount" required>
+						</div>
+					</div>
+				</form>
+			</div>
+
+			<div class="modal-footer d-flex justify-content-center">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary" id="saveDeal">Save</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade" id="dealDetailsModal" tabindex="-1" aria-labelledby="dealDetailsLabel" aria-hidden="true">
+	<div class="modal-dialog modal-lg">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="dealDetailsLabel">Full Deal Details</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<form>
+					<div class="row">
+						<div class="col-md-6">
+							<label class="form-label">Company</label>
+							<input type="text" class="form-control" id="viewCompany" readonly>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Deal Owner</label>
+							<input type="text" class="form-control" id="viewDealOwner" readonly>
+						</div>
+					</div>
+
+					<div class="row mt-3">
+						<div class="col-md-6">
+							<label class="form-label">Stage</label>
+							<input type="text" class="form-control" id="viewStage" readonly>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Probability (%)</label>
+							<input type="text" class="form-control" id="viewProbability" readonly>
+						</div>
+					</div>
+
+					<div class="row mt-3">
+						<div class="col-md-6">
+							<label class="form-label">Contact From</label>
+							<input type="text" class="form-control" id="viewContactFrom" readonly>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Email</label>
+							<input type="text" class="form-control" id="viewEmail" readonly>
+						</div>
+					</div>
+
+					<div class="row mt-3">
+						<div class="col-md-6">
+							<label class="form-label">Expected Revenue</label>
+							<input type="text" class="form-control" id="viewExpectedRevenue" readonly>
+						</div>
+						<div class="col-md-6">
+							<label class="form-label">Amount</label>
+							<input type="text" class="form-control" id="viewAmount" readonly>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<!-- jQuery & AJAX Script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	   $(document).ready(function () {
+		// When the plus button is clicked, set the Stage field value
+		$(".open-modal").click(function () {
+			var stage = $(this).data("stage"); // Get stage from button
+			$("#Stage").val(stage); // Set the stage in the form
+		});
+
+		$("#saveDeal").click(function () {
+				var formData = {
+		Company: $("#Company").val().trim(),
+		DealOwner: $("#DealOwner").val().trim(),
+		Stage: $("#Stage").val().trim(),
+		Probability: parseFloat($("#Probability").val()) || 0,
+		ContactFrom: $("#Contactfrom").val().trim(),  // Corrected ID
+		Email: $("#Email").val().trim(),  // Corrected ID
+		ExpectedRevenue: parseFloat($("#ExpectedRevenue").val()) || 0,
+		Amount: parseFloat($("#Amount").val()) || 0
+	};
+
+			$.ajax({
+				url: "/Deal/SubmitDetails",
+				type: "POST",
+				contentType: "application/json",
+				data: JSON.stringify(formData),
+				success: function (response) {
+					if (response.success) {
+						alert(response.message); // Show success message
+						location.reload(); // Refresh the page after successful submission
+					} else {
+						alert(response.message); // Show error message
+					}
+				},
+				error: function () {
+					alert("Error occurred while saving.");
+				}
+			});
+		});
+	});
+
+</script>
+<script>
+		$(document).ready(function () {
+		$(".deal-card").click(function () {
+			// Get data attributes from the clicked deal card
+			var company = $(this).data("company");
+			var dealOwner = $(this).data("dealowner");
+			var stage = $(this).data("stage");
+			var probability = $(this).data("probability");
+			var contactFrom = $(this).data("contactfrom");
+			var email = $(this).data("email");
+			var expectedRevenue = $(this).data("expectedrevenue");
+			var amount = $(this).data("amount");
+
+			// Populate modal fields
+			$("#viewCompany").val(company);
+			$("#viewDealOwner").val(dealOwner);
+			$("#viewStage").val(stage);
+			$("#viewProbability").val(probability);
+			$("#viewContactFrom").val(contactFrom);
+			$("#viewEmail").val(email);
+			$("#viewExpectedRevenue").val(expectedRevenue);
+			$("#viewAmount").val(amount);
+
+			// Show the modal
+			$("#dealDetailsModal").modal("show");
+		});
+	});
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

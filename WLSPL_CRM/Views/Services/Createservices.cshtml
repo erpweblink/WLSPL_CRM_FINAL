@@ -1,0 +1,259 @@
+﻿@{
+    ViewData["Title"] = "Createservices";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!-- Include SweetAlert2 CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.9/dist/sweetalert2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.9/dist/sweetalert2.min.js"></script>
+
+<!-- Add Select2 CSS -->
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<!-- Add jQuery (Select2 requires jQuery) -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<!-- Add Select2 JS -->
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h4 class="card-title">Add Services </h4>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body pt-0">
+
+                <form method="post" asp-action="SubmitDeatils">
+                    <div class="card mb-4" style="color:red">
+                        <div class="card-body">
+                            <div class="row mb-2">
+
+                                <div class="col-md-6">
+                                    <label for="DepartmentName" class="form-label">Department Name</label>
+                                    <input type="text" class="form-control" id="searchInput" placeholder="Search Department..." onkeyup="filterDepartments()" autocomplete="off" />
+
+                                    <ul id="departmentList" class="list-group mt-1" style="max-height: 200px; overflow-y: auto; display: none; position: absolute; z-index: 1000;">
+                                        @foreach (var Company in Model)
+                                        {
+                                            <li class="list-group-item" onclick="selectDepartment('@Company.DepartmentName')">@Company.DepartmentName</li>
+                                        }
+                                    </ul>
+
+                                    <input type="hidden" id="DepartmentName" name="DepartmentName" />
+                                    <small class="text-danger" asp-validation-for="DepartmentName"></small>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <label for="ServicesDesc" class="form-label">Services Descriptions</label>
+                                    <textarea class="form-control" placeholder="Enter Descriptions" name="ServicesDesc" id="ServicesDesc"></textarea>
+                                    <small asp-validation-for="ServicesDesc" class="text-danger"></small>
+                                </div>
+                            </div>
+
+                            <div class="row mb-2">
+                                <div class="col-md-6">
+                                    <label for="price" class="form-label">Price</label>
+                                    <input class="form-control" type="text" placeholder="Enter price" name="Price" id="price" />
+                                    <small asp-validation-for="Price" class="text-danger"></small>
+                                </div>
+
+                                <div class="col-md-6 position-relative">
+                                    <label for="Currency" class="form-label">Currency</label>
+
+                                    <!-- Searchable input box -->
+                                    <input type="text" class="form-control" id="currencySearchInput" placeholder="Search Currency..." onkeyup="filterCurrency()" autocomplete="off" />
+
+                                    <ul id="currencyList" class="list-group mt-1" style="max-height: 200px; overflow-y: auto; display: none; position: absolute; width: 100%; z-index: 1000;">
+                                        <li class="list-group-item" onclick="selectCurrency('', 'Select Currency')">Select Currency</li>
+                                        <li class="list-group-item" onclick="selectCurrency('AED', 'AED - United Arab Emirates Dirham')">AED - United Arab Emirates Dirham</li>
+                                        <li class="list-group-item" onclick="selectCurrency('ARS', 'ARS - Argentine Peso')">ARS - Argentine Peso</li>
+                                        <li class="list-group-item" onclick="selectCurrency('AUD', 'AUD - Australian Dollar')">AUD - Australian Dollar</li>
+                                        <li class="list-group-item" onclick="selectCurrency('BDT', 'BDT - Bangladeshi Taka')">BDT - Bangladeshi Taka</li>
+                                        <li class="list-group-item" onclick="selectCurrency('BRL', 'BRL - Brazilian Real')">BRL - Brazilian Real</li>
+                                        <li class="list-group-item" onclick="selectCurrency('CAD', 'CAD - Canadian Dollar')">CAD - Canadian Dollar</li>
+                                        <li class="list-group-item" onclick="selectCurrency('CHF', 'CHF - Swiss Franc')">CHF - Swiss Franc</li>
+                                        <li class="list-group-item" onclick="selectCurrency('CNY', 'CNY - Chinese Yuan')">CNY - Chinese Yuan</li>
+                                        <li class="list-group-item" onclick="selectCurrency('CZK', 'CZK - Czech Koruna')">CZK - Czech Koruna</li>
+                                        <li class="list-group-item" onclick="selectCurrency('DKK', 'DKK - Danish Krone')">DKK - Danish Krone</li>
+                                        <li class="list-group-item" onclick="selectCurrency('EGP', 'EGP - Egyptian Pound')">EGP - Egyptian Pound</li>
+                                        <li class="list-group-item" onclick="selectCurrency('EUR', 'EUR - Euro')">EUR - Euro</li>
+                                        <li class="list-group-item" onclick="selectCurrency('GBP', 'GBP - British Pound')">GBP - British Pound</li>
+                                        <li class="list-group-item" onclick="selectCurrency('HKD', 'HKD - Hong Kong Dollar')">HKD - Hong Kong Dollar</li>
+                                        <li class="list-group-item" onclick="selectCurrency('HRK', 'HRK - Croatian Kuna')">HRK - Croatian Kuna</li>
+                                        <li class="list-group-item" onclick="selectCurrency('HUF', 'HUF - Hungarian Forint')">HUF - Hungarian Forint</li>
+                                        <li class="list-group-item" onclick="selectCurrency('IDR', 'IDR - Indonesian Rupiah')">IDR - Indonesian Rupiah</li>
+                                        <li class="list-group-item" onclick="selectCurrency('ILS', 'ILS - Israeli New Shekel')">ILS - Israeli New Shekel</li>
+                                        <li class="list-group-item" onclick="selectCurrency('INR', 'INR - Indian Rupee')">INR - Indian Rupee</li>
+                                        <li class="list-group-item" onclick="selectCurrency('JPY', 'JPY - Japanese Yen')">JPY - Japanese Yen</li>
+                                        <li class="list-group-item" onclick="selectCurrency('KRW', 'KRW - South Korean Won')">KRW - South Korean Won</li>
+                                        <li class="list-group-item" onclick="selectCurrency('KWD', 'KWD - Kuwaiti Dinar')">KWD - Kuwaiti Dinar</li>
+                                        <li class="list-group-item" onclick="selectCurrency('LKR', 'LKR - Sri Lankan Rupee')">LKR - Sri Lankan Rupee</li>
+                                        <li class="list-group-item" onclick="selectCurrency('MXN', 'MXN - Mexican Peso')">MXN - Mexican Peso</li>
+                                        <li class="list-group-item" onclick="selectCurrency('MYR', 'MYR - Malaysian Ringgit')">MYR - Malaysian Ringgit</li>
+                                        <li class="list-group-item" onclick="selectCurrency('NGN', 'NGN - Nigerian Naira')">NGN - Nigerian Naira</li>
+                                        <li class="list-group-item" onclick="selectCurrency('NOK', 'NOK - Norwegian Krone')">NOK - Norwegian Krone</li>
+                                        <li class="list-group-item" onclick="selectCurrency('NZD', 'NZD - New Zealand Dollar')">NZD - New Zealand Dollar</li>
+                                        <li class="list-group-item" onclick="selectCurrency('PHP', 'PHP - Philippine Peso')">PHP - Philippine Peso</li>
+                                        <li class="list-group-item" onclick="selectCurrency('PKR', 'PKR - Pakistani Rupee')">PKR - Pakistani Rupee</li>
+                                        <li class="list-group-item" onclick="selectCurrency('PLN', 'PLN - Polish Zloty')">PLN - Polish Zloty</li>
+                                        <li class="list-group-item" onclick="selectCurrency('QAR', 'QAR - Qatari Rial')">QAR - Qatari Rial</li>
+                                        <li class="list-group-item" onclick="selectCurrency('RUB', 'RUB - Russian Ruble')">RUB - Russian Ruble</li>
+                                        <li class="list-group-item" onclick="selectCurrency('SAR', 'SAR - Saudi Riyal')">SAR - Saudi Riyal</li>
+                                        <li class="list-group-item" onclick="selectCurrency('SEK', 'SEK - Swedish Krona')">SEK - Swedish Krona</li>
+                                        <li class="list-group-item" onclick="selectCurrency('SGD', 'SGD - Singapore Dollar')">SGD - Singapore Dollar</li>
+                                        <li class="list-group-item" onclick="selectCurrency('THB', 'THB - Thai Baht')">THB - Thai Baht</li>
+                                        <li class="list-group-item" onclick="selectCurrency('TRY', 'TRY - Turkish Lira')">TRY - Turkish Lira</li>
+                                        <li class="list-group-item" onclick="selectCurrency('TWD', 'TWD - Taiwan Dollar')">TWD - Taiwan Dollar</li>
+                                        <li class="list-group-item" onclick="selectCurrency('UAH', 'UAH - Ukrainian Hryvnia')">UAH - Ukrainian Hryvnia</li>
+                                        <li class="list-group-item" onclick="selectCurrency('USD', 'USD - United States Dollar')">USD - United States Dollar</li>
+                                        <li class="list-group-item" onclick="selectCurrency('VND', 'VND - Vietnamese Dong')">VND - Vietnamese Dong</li>
+                                        <li class="list-group-item" onclick="selectCurrency('ZAR', 'ZAR - South African Rand')">ZAR - South African Rand</li>
+                                    </ul>
+
+                                    <!-- Hidden input for actual form submission -->
+                                    <input type="hidden" id="currency" name="Currency" />
+                                    <small asp-validation-for="Currency" class="text-danger"></small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="d-flex justify-content-center">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.9/dist/sweetalert2.min.js"></script>
+
+
+<script type="text/javascript">
+    function checkgsttype() {
+        debugger;
+        var selectedType = document.getElementById("DepartmentName").value;
+        var City = document.getElementById("dvGSTNo");
+        var Keywords = document.getElementById("dvGSTNo1");
+
+       
+    }
+
+</script>
+
+<script>
+
+
+    const exchangeRates = {
+            'USD': 1,
+            'EUR': 0.92,
+            'GBP': 0.82,
+            'JPY': 110.74,
+            'AUD': 1.49,
+            'CAD': 1.37,
+            'CHF': 0.94,
+            'CNY': 6.46,
+            'INR': 82.74,
+            'MXN': 19.79
+        };
+
+
+        function getExchangeRate(currency) {
+            return exchangeRates[currency] || 1;
+        }
+
+
+        function getPriceValue() {
+            const priceValue = parseFloat(document.getElementById("price").value);
+            return isNaN(priceValue) ? 0 : priceValue;
+        }
+
+        function setPriceValue(price) {
+            document.getElementById("price").value = price.toFixed(2);
+        }
+
+
+        function updatePriceBasedOnCurrency() {
+            const selectedCurrency = document.getElementById("currency").value;
+            const originalPrice = getPriceValue();
+            const exchangeRate = getExchangeRate(selectedCurrency);
+            const convertedPrice = originalPrice * exchangeRate;
+            setPriceValue(convertedPrice);
+        }
+
+
+        function initializePrice() {
+
+            updatePriceBasedOnCurrency();
+        }
+
+
+        window.onload = initializePrice;
+
+</script>
+
+<script>
+    function filterDepartments() {
+        const input = document.getElementById("searchInput");
+        const filter = input.value.toLowerCase();
+        const list = document.getElementById("departmentList");
+        const items = list.getElementsByTagName("li");
+
+        list.style.display = "block";
+
+        for (let i = 0; i < items.length; i++) {
+            const txtValue = items[i].textContent || items[i].innerText;
+            items[i].style.display = txtValue.toLowerCase().includes(filter) ? "" : "none";
+        }
+    }
+
+    function selectDepartment(value) {
+        document.getElementById("searchInput").value = value;
+        document.getElementById("DepartmentName").value = value;
+        document.getElementById("departmentList").style.display = "none";
+        checkgsttype(); // call your onchange logic
+    }
+
+    // Close list when clicking outside
+    document.addEventListener("click", function (e) {
+        if (!e.target.closest("#searchInput") && !e.target.closest("#departmentList")) {
+            document.getElementById("departmentList").style.display = "none";
+        }
+    });
+</script>
+
+<script>
+    function filterCurrency() {
+        const input = document.getElementById("currencySearchInput");
+        const filter = input.value.toLowerCase();
+        const list = document.getElementById("currencyList");
+        const items = list.getElementsByTagName("li");
+
+        list.style.display = "block";
+
+        for (let i = 0; i < items.length; i++) {
+            const txtValue = items[i].textContent || items[i].innerText;
+            items[i].style.display = txtValue.toLowerCase().includes(filter) ? "" : "none";
+        }
+    }
+
+    function selectCurrency(value, displayText) {
+        document.getElementById("currencySearchInput").value = displayText;
+        document.getElementById("currency").value = value;
+        document.getElementById("currencyList").style.display = "none";
+    }
+
+    // Hide list when clicking outside
+    document.addEventListener("click", function (e) {
+        if (!e.target.closest("#currencySearchInput") && !e.target.closest("#currencyList")) {
+            document.getElementById("currencyList").style.display = "none";
+        }
+    });
+</script>
+

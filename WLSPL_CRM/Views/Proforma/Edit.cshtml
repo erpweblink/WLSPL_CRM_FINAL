@@ -1,0 +1,405 @@
+﻿@model WLSPL_CRM_2.Models.ProformaInvoiceHdr
+@{
+	ViewData["Title"] = "Edit";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<style>
+	@@media (max-width: 768px) {
+		.form-label, .form-control, select, input {
+			font-size: 14px;
+		}
+
+		.table th, .table td {
+			white-space: nowrap;
+		}
+
+		.select2-container {
+			width: 100% !important;
+		}
+	}
+</style>
+<div class="row">
+	<div class="col-md-12">
+		<div class="card">
+			<div class="card-header">
+				<div class="row align-items-center">
+					<div class="col-auto">
+						<h4 class="card-title"> Edit Proforma</h4>
+					</div><!--end col-->
+					<div class="col-auto ms-auto">
+
+						@*<span class="text-primary fw-semibold">Note :</span><span class="text-primary fw-normal"> if you want to data edit do double click on a table row.</span> *@
+						<a class="btn btn-primary" asp-controller="Proforma" asp-action="Index">
+							<div class="d-flex align-items-center">
+								<span class="nav-link-text"> Back </span>
+							</div>
+						</a>
+
+					</div><!--end col-->
+				</div>  <!--end row-->
+			</div>
+
+			<div class="card-body pt-0">
+				<form method="post" id="proformaForm">
+					@Html.AntiForgeryToken()
+					<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+					<input type="hidden" id="id" name="id" asp-for="Id" />
+					<div class="card mb-4" style="color:red">
+						<div class="card-body">
+							<div class="row mb-2">
+								<div class="col-md-6">
+									<label class="form-label">Proforma No</label>
+									<input class="form-control" type="text" name="proformano" id="proformano" asp-for="ProformaNo" readonly="true" />
+								</div>
+								<div class="col-md-6">
+									<label class="form-label">Proforma Date</label>
+									<input class="form-control" type="date" name="ProformaDate" id="ProformaDate" readonly="true" asp-for="ProformaDate" />
+								</div>
+							</div>
+							<div class="row mb-2">
+								<div class="col-md-6">
+									<label class="form-label">Reverse Charge(Y/N)</label>
+									<input class="form-control" type="text" value="N" id="ReverseCharge" name="ReverseCharge" asp-for="ReverseCharge" readonly="true" />
+									<small asp-validation-for="QuotationDate" class="text-danger"></small>
+								</div>
+								<div class="col-md-6">
+									<label class="form-label">State</label>
+									<input class="form-control" type="text" name="State" id="State" asp-for="State" value="Maharashtra" readonly="true" />
+								</div>
+							</div>
+							<br />
+							<div class="col-md-6">
+								<label class="form-label">Against By</label>
+								<input class="form-control" type="text" name="againstBy" id="againstBy" asp-for="AgainstBy" readonly="true" />
+							</div>
+							<div class="col-md-6">
+							</div>
+							<br />
+							<div class="row mb-2">
+								<div class="col-md-6">
+									<label class="form-label">Customer Name</label>
+									<input class="form-control" type="text" name="CompanyName" id="CompanyName" asp-for="CompanyName" readonly="true" />
+								</div>
+								<div class="col-md-6">
+									<label class="form-label">Quotation No</label>
+									<input class="form-control" type="text" name="QuotationNo" id="QuotationNo" asp-for="QuotationNo" readonly="true" />
+								</div>
+							</div>
+							<div class="row mb-2">
+								<div class="col-md-6">
+									<label class="form-label">GST Number</label>
+									<input type="text" class="form-control" placeholder="Enter GST No " name="GstNo" id="GstNo" asp-for="GstNo" />
+								</div>
+								<div class="col-md-6">
+									<label class="form-label">Billing Address</label>
+									<textarea class="form-control" placeholder="Enter Billing Address" name="Address" id="Address" asp-for="Address"></textarea>
+									<small asp-validation-for="Address" class="text-danger"></small>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="container mt-4">
+						<div class="table-responsive" style="overflow-x: auto;">
+							<table class="table table-bordered" id="invoiceTable" style="min-width: 1200px;">
+								<thead class="table-light">
+									<tr>
+										<th>#</th>
+										<th>Sr. No.</th>
+										<th>Product Description</th>
+										<th>HSN/SAC</th>
+										<th>QTY</th>
+										<th>RATE</th>
+										<th>TAXABLE VALUE</th>
+										<th colspan="2">DISCOUNT</th>
+										<th colspan="2">TAX</th>
+										<th>Total</th>
+									</tr>
+									<tr>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th>%</th>
+										<th>AMOUNT</th>
+										<th>%</th>
+										<th>AMOUNT</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody id="tableBody"></tbody>
+								<tfoot>
+									<tr>
+										<td colspan="12">
+											<button type="button" class="btn btn-primary" id="addRowBtn" onclick="checkandAdd()">ADD ROW</button>
+										</td>
+									</tr>
+								</tfoot>
+							</table>
+						</div>
+
+						<div class="mt-3 text-end">
+							<h4><strong>Grand Total: ₹<span id="grandTotal" name="grandTotal"></span></strong></h4>
+
+						</div>
+
+						<br />
+						<tr>
+							<td colspan="10">
+								<button class="btn btn-primary" style="margin-left: 510px;text-align: right;" type="submit">Update</button>
+							</td>
+						</tr>
+
+					</div>
+					<br />
+				</form>
+
+			</div>
+		</div>
+	</div>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+	<script>
+		 var ServiceList = @Html.Raw(Json.Serialize(ViewBag.ProductList ?? new List<object>()));
+		 var ProductDetsils = @Html.Raw(Json.Serialize(ViewBag.ProductDetsils ?? new List<object>()));
+		 const taxOptions = [
+			 { value: 0, text: '0%' },
+			 { value: 5, text: 'GST@5%' },
+			 { value: 18, text: 'GST@18%' }
+		 ];
+
+		 $(document).ready(function () {
+			 var againstBy = $('#againstBy').val();
+			 if(againstBy ==="Order"){
+				 $('#addRowBtn').hide();
+			 }
+			 if (ProductDetsils && ProductDetsils.length > 0) {
+				 ProductDetsils.forEach((item, index) => {
+					 addExistingItemToGrid(item, index + 1);
+				 });
+			 }
+		 });
+
+		function addExistingItemToGrid(item, srNo) {
+			 var againstBy = $('#againstBy').val();
+			 const taxDropdownOptions = taxOptions.map(tax =>
+				 `<option value="${tax.value}" ${item.tax == tax.value ? 'selected' : ''}>${tax.text}</option>`
+			 ).join('');
+
+			 const serviceOptions = ServiceList.map(service =>
+				 `<option value="${service.value}" ${item.productDescription === service.text ? 'selected' : ''}>${service.text}</option>`
+			 ).join('');
+
+			  const deleteButtonColumn = againstBy === "Order"
+			  ? `<td></td>`
+			  : `<td>
+					  <button type="button" class="btn btn-danger removeRowBtn" onclick="removeRow(this)">🗑</button>
+				 </td>`;
+
+			 debugger;
+			 let row = `
+			 <tr>
+				  ${deleteButtonColumn}
+				 <td style="width: 50px;">${srNo}</td>
+				 <td>
+					  <select class="form-control" name="productDescription" id="productDescription" onChange="BindDetails(this)" style="width: 154px;" disabled>
+						 <option value="">Select Product</option>
+						 ${serviceOptions}
+					 </select>
+				 </td>
+				 <td><input type="text" class="form-control" name="sacCode" style="width: 90px;" value="${item.sacCode || ''}" /></td>
+				 <td><input type="text" class="form-control" name="qty" style="width: 60px;" value="${item.qty}" onkeyup="CalculateRate(this)" /></td>
+				 <td><input type="text" class="form-control" name="rate" style="width: 90px;" value="${item.rate}" onkeyup="CalculateRate(this)" /></td>
+				 <td><input type="text" class="form-control" name="total" style="width: 133px;" readonly value="${(item.total || 0).toFixed(2)}" /></td>
+				 <td><input type="text" class="form-control" name="discount" style="width: 60px;" value="${item.discount}" onkeyup="CalculateRate(this)" /></td>
+				 <td><input type="text" class="form-control" name="discountAmt" style="width: 90px;" readonly value="${(item.discountAmt || 0).toFixed(2)}" /></td>
+				 <td>
+					 <select class="form-control tax-dropdown" name="tax" onchange="CalculateRate(this)" style="width: 100px;">
+						 ${taxDropdownOptions}
+					 </select>
+				 </td>
+				 <td><input type="text" class="form-control" name="taxAmt" style="width: 90px;" readonly value="${(item.taxAmt || 0).toFixed(2)}" /></td>
+				 <td><input type="text" class="form-control" name="grandTotal" style="width: 133px;" readonly value="${(item.grandTotal || 0).toFixed(2)}" /></td>
+			 </tr>`;
+
+			 $('#tableBody').append(row);
+			 updateGrandTotal();
+		 }
+
+		function CalculateRate(inputElement) {
+			 const row = $(inputElement).closest('tr');
+
+			 const qty = parseFloat(row.find('input[name="qty"]').val()) || 0;
+			 const rate = parseFloat(row.find('input[name="rate"]').val()) || 0;
+			 const discount = parseFloat(row.find('input[name="discount"]').val()) || 0;
+			 const tax = parseFloat(row.find('select[name="tax"]').val()) || 0;
+
+			 const amount = qty * rate;
+			 const discountAmount = (amount * discount) / 100;
+			 const taxableAmount = amount - discountAmount;
+			 const taxAmount = (taxableAmount * tax) / 100;
+			 const grandTotal = taxableAmount + taxAmount;
+
+			 row.find('input[name="total"]').val(amount.toFixed(2));
+			 row.find('input[name="discountAmt"]').val(discountAmount.toFixed(2));
+			 row.find('input[name="taxAmt"]').val(taxAmount.toFixed(2));
+			 row.find('input[name="grandTotal"]').val(grandTotal.toFixed(2));
+
+
+			 updateGrandTotal();
+		 }
+
+		function updateGrandTotal() {
+			 let total = 0;
+			 $('input[name="grandTotal"]').each(function () {
+				 total += parseFloat($(this).val()) || 0;
+			 });
+			 $('#grandTotal').text(total.toFixed(2));
+		 }
+		function removeRow(btn) {
+			 $(btn).closest('tr').remove();
+			 updateGrandTotal();
+		 }
+
+		 function checkandAdd() {
+			  var CompanyName = $('#CompanyName').val();
+			  if (CompanyName) {
+				 let srNo = $('#tableBody tr').length + 1;
+
+				 let row = `
+					 <tr>
+								 <td>
+				 <button type="button" class="btn btn-danger removeRowBtn" onclick="removeRow(this)">
+					 🗑
+				 </button>
+			 </td>
+						 <td>${srNo}</td>
+						 <td> <select class="form-control" name="productDescription" id="productDescription" onChange="BindDetails(this)" style="width: 154px;">
+							 <option value="">Select Product</option>
+							 ${ServiceList.map(service => {
+								 return `<option value="${service.value}">${service.text}</option>`;
+							 }).join('')}
+						 </select></td>
+						 <td><input type="text" class="form-control" name="sacCode" style="width: 90px;"></td>
+						 <td><input type="text" class="form-control" name="qty" style="width: 60px;" onkeyup="CalculateRate(this)"></td>
+						 <td><input type="text" class="form-control" name="rate" style="width: 90px;" onkeyup="CalculateRate(this)"></td>
+						 <td><input type="text" class="form-control" name="total" readonly style="width: 133px;"></td>
+						 <td><input type="text" class="form-control" name="discount" onkeyup="CalculateRate(this)" style="width: 60px;"></td>
+						 <td><input type="text" class="form-control" name="discountAmt" readonly style="width: 90px;"></td>
+						 <td> <select class="form-control tax-dropdown" name="tax" onchange="CalculateRate(this)" style="width: 100px;">
+									 ${taxOptions.map(tax => `<option value="${tax.value}">${tax.text}</option>`).join('')}
+								 </select></td>
+						 <td><input type="text" class="form-control" name="taxAmt" readonly style="width: 90px;"></td>
+						 <td><input type="text" class="form-control" name="grandTotal" readonly style="width: 133px;"></td>
+					 </tr>`;
+
+				 $('#tableBody').append(row);
+				   $('.productDescription').select2({
+				 placeholder: "Search for Product",
+				 allowClear: true
+			 });
+			 }else{
+				 alert("Please Select Customer");
+			   }
+			 }
+		 // Handle form submission
+		 $('#proformaForm').on('submit', function (e) {
+				 e.preventDefault();
+
+				 // Clear previous errors
+				 $('span.text-danger').text('');
+
+				 // Run jQuery Validate
+				 if (!$(this).valid()) {
+					 alert("Please fill all required fields.");
+					 return false;
+				 }
+
+				 let isValid = true;
+				 let invoiceItems = [];
+
+				 $('#tableBody tr').each(function (index, row) {
+					 let $row = $(row);
+
+					 let product = $row.find('select[name="productDescription"] option:selected').text();
+					 let qty = parseFloat($row.find('input[name="qty"]').val()) || 0;
+					 let rate = parseFloat($row.find('input[name="rate"]').val()) || 0;
+
+					 // Validate each row
+					 if (!product || qty <= 0 || rate <= 0) {
+						 isValid = false;
+						 $row.css('background-color', '#ffe6e6');
+						 // You can also add an inline message here if needed
+					 } else {
+						 $row.css('background-color', '');
+					 }
+
+					 // Push to item array
+					 invoiceItems.push({
+						 ProductDescription: product,
+						 SACCode: $row.find('input[name="sacCode"]').val(),
+						 Qty: qty,
+						 Rate: rate,
+						 Total: parseFloat($row.find('input[name="total"]').val()) || 0,
+						 Discount: parseFloat($row.find('input[name="discount"]').val()) || 0,
+						 DiscountAmt: parseFloat($row.find('input[name="discountAmt"]').val()) || 0,
+						 Tax: parseFloat($row.find('select[name="tax"]').val()) || 0,
+						 TaxAmt: parseFloat($row.find('input[name="taxAmt"]').val()) || 0,
+						 GrandTotal: parseFloat($row.find('input[name="grandTotal"]').val()) || 0
+					 });
+				 });
+
+				 if (!isValid) {
+					 alert("Please correct errors in the highlighted rows.");
+					 return;
+				 }
+				 // Collect form fields
+				 let formData = {
+					  Id:$('#id').val(),
+					 ProformaNo: $('#proformano').val(),
+					 ProformaDate: $('#ProformaDate').val(),
+					 ReverseCharge: $('#ReverseCharge').val(),
+					 State: $('#State').val(),
+					 CompanyName: $('#CompanyName').val(),
+					 Address: $('#Address').val(),
+					 GstNo: $('#GstNo').val(),
+					 QuotationNo: $('#QuotationNo').val(),
+					 AgainstBy: $('#againstBy').val(),
+					 AllProTotalAmount:$('#grandTotal').text(),
+					 InvoiceDetails: invoiceItems
+				 };
+				 debugger;
+				 console.log("Submitting Proforma:", formData);
+				 // Submit via AJAX
+				 $.ajax({
+					 url: '/Proforma/Edit',
+					 type: 'POST',
+					 contentType: 'application/json',
+					 data: JSON.stringify(formData),
+					 headers: {
+						 "X-CSRF-TOKEN": $('input[name="__RequestVerificationToken"]').val()
+					 },
+					 success: function (response) {
+						 if (response.success) {
+				 window.location.href = response.redirectUrl;
+			 } else {
+				 alert('Save failed.');
+			 }
+					 },
+					 error: function (xhr, status, error) {
+						 console.error("Save error:", xhr.responseText);
+						 alert("Error occurred: " + (xhr.responseJSON?.error || error));
+					 }
+				 });
+			 });
+
+	</script>
+</div>
+

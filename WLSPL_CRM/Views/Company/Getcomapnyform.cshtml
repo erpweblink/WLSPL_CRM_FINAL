@@ -1,0 +1,613 @@
+﻿@model List<WLSPL_CRM_2.Models.Company>
+@{
+    ViewData["Title"] = "Getcomapnyform";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!-- Include SweetAlert2 CSS and JS -->
+<link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.9/dist/sweetalert2.min.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.9/dist/sweetalert2.min.js"></script>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            <div class="card-header">
+                <div class="row align-items-center">
+                    <div class="col">
+                        <h4 class="card-title">Add Company </h4>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body pt-0">
+
+                @if (TempData["SuccessMessage"] != null)
+                {
+                    <script>
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success!',
+                            text: '@TempData["SuccessMessage"]',
+                            showConfirmButton: true
+                        });
+                    </script>
+                }
+        
+                @if (ViewBag.company == null)
+                {
+                    <form method="post" asp-action="SubmitDeatils" id="formmain">
+                        <div class="card mb-4" style="color:red">
+                            <div class="card-body">
+                                <!-- Basic Info Section -->
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <label for="companyCode" class="form-label">Company code</label>
+                                        <input class="form-control" type="text" name="CompanyCode" readonly value="@ViewBag.code" style="color: red;" />
+                                        <small asp-validation-for="CompanyCode" class="text-danger"></small>
+                                    </div>
+                                    <!-- Register For Dropdown -->
+                                    <div class="col-md-6">
+                                        <label for="Registerfor" class="form-label">Register For</label>
+                                        <select class="form-control" name="Registerfor" id="Registerfor" onchange="checkregistertype()">
+                                            <option value="0" disabled selected>-- Register For --</option>
+                                            <option value="WLS">WLS</option>
+                                            <option value="WLS">WLSPL</option>
+                                        </select>
+                                        <small asp-validation-for="SupplyType" class="text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!-- Company Name Section -->
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <label for="CompanyName" class="form-label">Company Name</label>
+                                        <input class="form-control" type="text" placeholder="Enter Customer Name" name="CompanyName" id="CompanyName" />
+                                        <small asp-validation-for="CompanyName" class="text-danger"></small>
+                                    </div>
+                            
+                                    <div class="col-md-6">
+                                        <label for="SupplyType" class="form-label">Type of Supply For E-Invoice</label>
+                                        <select class="form-control" name="SupplyType" onchange="checkgsttype()" id="SupplyType">
+                                            <option value="0" disabled selected>-- Select Type of Supply --</option>
+                                            <option value="B2B">B2B</option>
+                                            <option value="B2C">B2C</option>
+                                            <option value="SEZWOP">SEZWOP</option>
+                                            <option value="EXPWOP">EXPWOP</option>
+                                        </select>
+                                        <small asp-validation-for="SupplyType" class="text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!-- GST Number Section -->
+                                <div class="row mb-2" >
+                                    <div class="col-md-6" id="dvGSTNo">
+                                        <label for="GSTNo" class="form-label">GST Number</label>
+                                        <input class="form-control" type="text" placeholder="GST Number" name="GSTNo" id="GSTNo" onchange="checkissubmit()" />
+                                        <small asp-validation-for="GSTNo" class="text-danger"></small>
+                                        <a href="https://services.gst.gov.in/services/searchtp" target="_blank" class="btn btn-link">Search GST Number</a>
+                                        <div id="gst-error" style="color: red; display: none;">Please enter a valid GST number.</div>
+                                    </div>
+                               
+                                    <div class="col-md-6">
+                                        <label for="AreaNAme" class="form-label">Area Name</label>
+                                        <input class="form-control" type="text" placeholder="Area Name" name="AreaNAme" id="AreaNAme" />
+                                        <small asp-validation-for="AreaNAme" class="text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!-- Billing and Shipping Address Sections -->
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <label for="BillAddress" class="form-label">Billing Address</label>
+                                        <textarea class="form-control" placeholder="Enter Billing Address" name="BillingAddress" onchange="copyBillingToShipping()" maxlength="100"></textarea>
+                                        <small asp-validation-for="BillAddress" class="text-danger"></small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="ShippAddress" class="form-label">Shipping Address</label>
+                                        <textarea class="form-control" type="text" placeholder="Enter Shipping Address" name="ShippingAddress" id="ShippingAddress"></textarea>
+                                        <small asp-validation-for="ShippAddress" class="text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!-- Billing and Shipping Location Sections -->
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <label for="BillLocation" class="form-label">Billing Location</label>
+                                        <input class="form-control" type="text" placeholder="Enter Billing Location" name="BillLocation" id="BillLocation" onchange="copyBillingToShipping()" />
+                                        <small asp-validation-for="BillLocation" class="text-danger"></small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="ShippLocation" class="form-label">Shipping Location</label>
+                                        <input class="form-control" type="text" placeholder="Enter Shipping Locations" name="ShippLocation" id="ShippLocation" />
+                                        <small asp-validation-for="ShippLocation" class="text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!-- Billing and Shipping Pincode Sections -->
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <label for="BillingPincode" class="form-label">Billing Pincode</label>
+                                        <input class="form-control" type="text" placeholder="Enter Billing Pincode" name="BillingPincode" onchange="copyBillingToShipping()" />
+                                        <small asp-validation-for="BillingPincode" class="text-danger"></small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="ShippingPincode" class="form-label">Shipping Pincode</label>
+                                        <input class="form-control" type="text" placeholder="Enter Shipping Pincode" name="ShippingPincode" />
+                                        <small asp-validation-for="ShippingPincode" class="text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!-- Billing and Shipping State Code Sections -->
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <label for="BillStateCode" class="form-label">Billing Statecode</label>
+                                        <input class="form-control" type="text" placeholder="Enter Billing Statecode" name="BillStateCode" id="BillStateCode" onchange="copyBillingToShipping()" />
+                                        <small asp-validation-for="BillStateCode" class="text-danger"></small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="ShippStateCode" class="form-label">Shipping State Code</label>
+                                        <input class="form-control" type="text" placeholder="Enter Shipping State Code" name="ShippStateCode" />
+                                        <small asp-validation-for="ShippStateCode" class="text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!-- Contact Info Section -->
+                                <div id="contact-rows">
+                                    <div class="contact-row" id="contact-row-1">
+                                        <div class="row mb-2">
+                                            <div class="col-md-6">
+                                                <label for="contactName_1">Name:</label>
+                                                <input type="text" class="form-control" id="Name" name="Name" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="contactMobile_1">Mobile:</label>
+                                                <input type="text" class="form-control" id="MobileNo" name="MobileNo" />
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-md-6">
+                                                <label for="contactEmail_1">Email:</label>
+                                                <input type="text" class="form-control" id="EmailID" name="EmailID" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="contactDesignation_1">Designation:</label>
+                                                <input type="text" class="form-control" id="Designation" name="Designation" />
+                                            </div>
+                                        </div>
+                                        <button type="button" id="btnAddContact" class="btn btn-success" onclick="Addcontactetails()">+ Add Contact</button>
+                                    </div>
+                                </div>
+
+                                <!-- Submit Button -->
+                                <div class="d-flex justify-content-center">
+                                    <button type="submit" class="btn btn-primary" id="btnSubmit" onclick="getContactValues()">Submit</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+
+                }
+                else
+                {
+                    <form method="post" asp-action="UpdateDeatils">
+                        <!-- Combined Card Section -->
+                        <div class="card mb-4" style="color:red">
+                            <div class="card-body">
+                                <!-- Basic Info Section -->
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <label for="companyCode" class="form-label">Comapny code</label>
+                                        <input class="form-control" type="text" name="CompanyCode" readonly value="@ViewBag.company?.CompanyCode" style="color: red;" />
+                                        <input type="hidden" id="ID" name="id" value="@ViewBag.company?.Id" />
+                                        <small asp-validation-for="CompanyCode" class="text-danger"></small>
+                                    </div>
+
+
+
+
+                                    <div class="col-md-6">
+                                        <label for="Registerfor" class="form-label">Register For</label>
+                                      @*   <select class="form-control" name="Registerfor" id="Registerfor" onchange="checkregistertype()">
+                                            <option value="0" disabled selected>-- Register For --</option>
+                                            <option value="WLS">WLS</option>
+                                            <option value="WLS">WLSPL</option>
+                                        </select>
+                                        <small asp-validation-for="SupplyType" class="text-danger"></small> *@
+
+                                        @Html.DropDownList(
+                                                 "Registerfor",
+                                                 new SelectList(ViewBag.RegisterForList, "Value", "Text", ViewBag.company?.Registerfor),
+                                                 "-- Register For --",
+                                                 new { @class = "form-control", id = "Registerfor", onchange = "checkregistertype()" }
+                                                 )
+
+
+                                    </div>
+
+                               
+                                </div>
+
+                                <!-- Contact Details Section -->
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <label for="SupplyType" class="form-label">Type of Supply For E-Invoice</label>
+
+                                        @* @foreach (var company in Model)
+                                        {
+                                            @Html.HiddenFor(model => company.supplytype)
+                                            @Html.DropDownListFor(
+                                             model => company.supplytype,
+                                             new SelectList(ViewBag.SupplyTypes, "Value", "Text", company.supplytype),
+                                            "-- Select Type of Supply --",  // Placeholder text
+                                            new { @class = "form-control", id = "SupplyType_" + company.supplytype })
+                                        } *@
+                                        @for (int i = 0; i < Model.Count; i++)
+                                        {
+                                            @Html.HiddenFor(model => Model[i].supplytype)
+
+                                            @Html.DropDownListFor(
+                                                     model => Model[i].supplytype,
+                                                     new SelectList(ViewBag.SupplyTypes, "Value", "Text", Model[i].supplytype),
+                                                     "-- Select Type of Supply --",
+                                                     new { @class = "form-control", id = "SupplyType_" + i }
+                                                     )
+                                        }
+
+
+                                        <small asp-validation-for="SupplyType" class="text-danger"></small>
+                                    </div>
+
+
+                                    <div class="col-md-6">
+                                        <label for="CompanyName" class="form-label">Comapny Name</label>
+                                        <input class="form-control" type="text" placeholder="Enter Customer Name" name="CompanyName" id="CompanyName" value="@ViewBag.company?.CompanyName" />
+                                        <small asp-validation-for="CompanyName" class="text-danger"></small>
+                                    </div>
+
+                               
+
+                                </div>
+
+                                <div class="row mb-2">
+
+                                    <div class="col-md-6" id="dvGSTNo">
+                                        <label for="GSTNo" class="form-label">GST Number</label>
+                                        <input class="form-control" type="text" placeholder="GST Number" name="GSTNo" id="GSTNo" onchange="checkissubmit()" value="@ViewBag.company?.GSTNo" />
+                                        <small asp-validation-for="GSTNo" class="text-danger"></small>
+                                        <a href="https://services.gst.gov.in/services/searchtp" target="_blank" class="btn btn-link">Search GST Number</a>
+                                        <div id="gst-error" style="color: red; display: none;">Please enter a valid GST number.</div>
+                                    </div>
+
+
+                                    <div class="col-md-6">
+                                        <label for="AreaNAme" class="form-label">Area Name</label>
+@*                                         <input class="form-control" type="text" placeholder="Area Name" name="AreaNAme" @ViewBag.company?.AreaNAme /> *@
+                                        <input class="form-control" type="text" placeholder="Area Name" name="AreaNAme" value="@ViewBag.company?.AreaNAme" />
+
+                                        <small asp-validation-for="AreaNAme" class="text-danger"></small>
+                                    </div>
+
+
+                                </div>
+
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <label for="BillAddress" class="form-label">Billing Address</label>
+                                        @* <input class="form-control" type="tel" placeholder="Enter Billing  Address" name="BillAddress" /> *@
+                                        <textarea class="form-control" placeholder="Enter Billing Address" name="BillingAddress">@ViewBag.company?.BillAddress</textarea>
+                                        <small asp-validation-for="BillAddress" class="text-danger"></small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="ShippAddress" class="form-label">Shipping Address</label>
+                                        <textarea class="form-control" placeholder="Enter Shipping Address" name="ShippingAddress">@ViewBag.company?.ShippAddress</textarea>
+                                        <small asp-validation-for="ShippAddress" class="text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <label for="BillLocation" class="form-label">Billing Location</label>
+                                        <input class="form-control" type="text" placeholder="Enter Billing Location" name="BillLocation" value="@ViewBag.company?.BillLocation" />
+                                        <small asp-validation-for="BillLocation" class="text-danger"></small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="ShippLocation" class="form-label">Shipping Location</label>
+                                        <input class="form-control" type="text" placeholder="Enter shipping Locations" name="ShippLocation" value="@ViewBag.company?.ShippLocation" />
+                                        <small asp-validation-for="ShippLocation" class="text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <!-- Business Executive Info Section -->
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <label for="BillingPincode" class="form-label">Billing Pincode</label>
+                                        <input class="form-control" type="text" placeholder="Enter Executive" name="BillingPincode" value="@ViewBag.company?.BillingPincode" />
+                                        <small asp-validation-for="BillingPincode" class="text-danger"></small>
+                                    </div>
+        
+
+                                    <div class="col-md-6">
+                                        <label for="shipping pincode" class="form-label">Shipping Pincode</label>
+                                        <input class="form-control" type="text" placeholder="shipping pincode" name="ShippingPincode" value="@ViewBag.company?.ShippingPincode" />
+                                        <small asp-validation-for="ShippingPincode" class="text-danger"></small>
+                                    </div>
+                                </div>
+
+                                <div class="row mb-2">
+                                    <div class="col-md-6">
+                                        <label for="BillStateCode" class="form-label">Billing Statecode</label>
+                                        <input class="form-control" type="text" placeholder="Enter Billing Statecode" name="BillStateCode" id="BillStateCode" value="@ViewBag.company?.BillStateCode" />
+                                        <small asp-validation-for="BillStateCode" class="text-danger"></small>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="ShippStateCode" class="form-label">Shipping State Code</label>
+                                        <input class="form-control" type="text" placeholder="Enter Shipping state code" name="ShippStateCode" value="@ViewBag.company?.ShippStateCode" />
+                                        <small asp-validation-for="ShippStateCode" class="text-danger"></small>
+                                    </div>
+                                </div>
+
+
+                                <div id="contact-rows">
+                                    <div class="contact-row" id="contact-row-1">
+                                        <div class="row mb-2">
+                                            <div class="col-md-6">
+                                                <label for="contactName_1">Name:</label>
+                                                <input type="text" class="form-control" id="Name" name="Name" value="@ViewBag.company?.Name1" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="contactMobile_1">Mobile:</label>
+                                                <input type="text" class="form-control" id="MobileNo" name="MobileNo" value="@ViewBag.company?.MobileNo1" />
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-md-6">
+                                                <label for="contactEmail_1">Email:</label>
+                                                <input type="text" class="form-control" id="EmailID" name="EmailID" value="@ViewBag.company?.EmailID1" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="contactDesignation_1">Designation:</label>
+                                                <input type="text" class="form-control" id="Designation" name="Designation" value="@ViewBag.company?.Designation1" />
+                                            </div>
+                                        </div>
+                                        @if (string.IsNullOrEmpty(ViewBag.company?.Name1))
+                                        {
+                                            <button type="button" id="btnAddContact" class="btn btn-success" onclick="Addcontactetails()">+ Add Contact</button>
+                                        }
+                                        else
+                                        {
+                                            <button type="button" id="btnAddContact" class="btn btn-success" style="display:none;" onclick="Addcontactetails()">+ Add Contact</button>
+                                        }
+                                        @* <button type="button" id="btnAddContact" class="btn btn-success" onclick="Addcontactetails()" >+ Add Contact</button> *@
+                                    </div>
+                                </div>
+
+                                <div id="DIV2" style="display:none;">
+                                    <div class="contact-row" id="contact-row-1">
+                                        <div class="row mb-2">
+                                            <div class="col-md-6">
+                                                <label for="Name1">Name1:</label>
+                                                <input type="text" class="form-control" id="Name1" name="Name1" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="MobileNo1">Mobile1:</label>
+                                                <input type="text" class="form-control" id="MobileNo1" name="MobileNo1" />
+                                            </div>
+                                        </div>
+                                        <div class="row mb-2">
+                                            <div class="col-md-6">
+                                                <label for="EmailID1">Email1:</label>
+                                                <input type="text" class="form-control" id="EmailID1" name="EmailID1" />
+                                            </div>
+                                            <div class="col-md-6">
+                                                <label for="Designation1">Designation1:</label>
+                                                <input type="text" class="form-control" id="Designation1" name="Designation1" />
+                                            </div>
+                                        </div>
+                                        <button type="button" id="btnAddContact" class="btn btn-success" style="display:none">+ Add Contact</button>
+                                    </div>
+                                    <button type="button" id="btnAddContact" class="btn btn-success">+ Add Contact</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <div class="d-flex justify-content-center">
+                            <button type="submit" class="btn btn-primary" id="btnUpdate">Update</button>
+                        </div>
+                    </form>
+                }
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<script type="text/javascript">
+    function checkgsttype() {
+        debugger;
+        var selectedType = document.getElementById("SupplyType").value;
+        var gstElement = document.getElementById("dvGSTNo");
+
+        if (gstElement) {
+            if (selectedType === "EXPWOP" || selectedType === "SEZWOP") {
+                console.log("Hiding GSTNo element");
+                gstElement.style.display = "none";
+            } else {
+                console.log("Showing GSTNo element");
+                gstElement.style.display = "block";
+            }
+        } else {
+            console.error('GSTNo element not found');
+        }
+    }
+
+</script>
+<script>
+    function checkissubmit() {
+        debugger;
+        var gstNo = document.getElementById("GSTNo").value;
+        var company = document.getElementById("CompanyName").value;
+
+        if (gstNo && gstNo.length === 15) {
+
+            var stateCode = gstNo.substring(0, 2);
+            document.getElementById("BillStateCode").value = stateCode;
+        }
+
+        console.log("GSTNo: ", gstNo);
+        console.log("Company: ", company);
+
+        if (gstNo === "" || company === "") {
+            alert("GST Number and Company Name cannot be empty!");
+            return false;
+        }
+
+        $.ajax({
+            url: '@Url.Action("checkcompanyandGst", "Company")',
+            type: 'POST',
+            data: {
+                gstNo: gstNo,
+                companyName: company
+            },
+            success: function (response) {
+                if (response === "Valid") {
+
+                } else {
+                    alert("Company Already Present");
+                    location.reload();
+                }
+            },
+            error: function (xhr, status, error) {
+                alert("An error occurred: " + error);
+            }
+        });
+
+    }
+
+</script>
+<script>
+    function Addcontactetails() {
+        debugger;
+        var Element = document.getElementById("DIV2");
+        Element.style.display = "block";
+        console.error('WORK');
+    }
+
+</script>
+<script>
+
+        document.getElementById("formmain").addEventListener("submit", function (event) {
+        if (!checkvalidation()) {
+            event.preventDefault();
+        }
+    });
+        function checkvalidation() {
+        debugger;
+        var registerFor = document.getElementById("Registerfor").value;
+        var gstNo = document.getElementById("GSTNo");
+        var company = document.getElementById("CompanyName");
+        var BillingAddress = document.querySelector('[name="BillingAddress"]');
+        var BillingLocations = document.querySelector('[name="BillLocation"]');
+        var AreaNAme = document.querySelector('[name="AreaNAme"]');
+        var ShippingAddress = document.querySelector('[name="ShippingAddress"]');
+        var ShippLocation = document.querySelector('[name="ShippLocation"]');
+        var BillingPincode = document.querySelector('[name="BillingPincode"]');
+        var ShippingPincode = document.querySelector('[name="ShippingPincode"]');
+        var BillStateCode = document.querySelector('[name="BillStateCode"]');
+        var ShippStateCode = document.querySelector('[name="ShippStateCode"]');
+
+        const fields = [
+            { field: company, message: "Company Name cannot be empty." },
+            {
+                field: gstNo,
+                validate: function (value) {
+                    if (value.trim() === "") return "GST Number cannot be empty.";
+                    if (!/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(value.trim())) {
+                        return "GST Number is not in a valid format.";
+                    }
+                    return "";
+                }
+            },
+
+            { field: BillingAddress, message: "Billing Address cannot be empty." },
+            { field: BillingLocations, message: "Billing Location cannot be empty." },
+            { field: AreaNAme, message: "Area Name cannot be empty." },
+            { field: ShippingAddress, message: "Shipping Address cannot be empty." },
+            { field: ShippLocation, message: "Shipping Location cannot be empty." },
+            { field: BillingPincode, message: "Billing Pincode cannot be empty." },
+            { field: BillStateCode, message: "Billing State Code cannot be empty." },
+            { field: ShippStateCode, message: "Shipping State Code cannot be empty." },
+            { field: ShippingPincode, message: "Shipping Pincode cannot be empty." },
+        ];
+
+        resetErrorStyles(fields.map(f => f.field));
+
+        for (let item of fields) {
+            const value = item.field?.value?.trim();
+            let errorMessage = "";
+
+            if (item.validate) {
+                errorMessage = item.validate(value);
+            } else if (!value) {
+                errorMessage = item.message;
+            }
+
+            if (errorMessage) {
+                displayErrorMessage(item.field, errorMessage);
+                item.field.classList.add("is-invalid");
+                item.field.focus();
+                return false; // Stop at the first error
+            }
+        }
+
+        return true;
+    }
+
+     function displayErrorMessage(element, errorMessage) {
+        // Create a new span element for the error message
+        var errorSpan = document.createElement("span");
+        errorSpan.className = "error-message text-danger"; // Add Bootstrap's text-danger for red color
+        errorSpan.textContent = errorMessage;
+
+        // Find the parent container of the input element (usually a div with class="col-md-...")
+        var parentDiv = element.parentNode;
+
+        // Append the error message span below the input element
+        if (parentDiv) {
+            parentDiv.appendChild(errorSpan);
+        } else {
+
+            element.parentNode.appendChild(errorSpan);
+        }
+    }
+    function resetErrorStyles(elements) {
+        elements.forEach(element => {
+            element.classList.remove("is-invalid");
+            // Remove any existing error messages
+            var errorSpan = element.parentNode.querySelector(".error-message");
+            if (errorSpan) {
+                errorSpan.remove();
+            }
+        });
+    }
+
+</script>
+
+<script>
+    function copyBillingToShipping() {
+        debugger;
+        const billingAddress = document.querySelector('[name="BillingAddress"]').value;
+        const billingLocation = document.getElementById("BillLocation").value;
+        const billingPincode = document.querySelector('[name="BillingPincode"]').value;
+        const billingStateCode = document.getElementById("BillStateCode").value;
+        document.getElementById("ShippingAddress").value = billingAddress;
+        document.getElementById("ShippLocation").value = billingLocation;
+        document.querySelector('[name="ShippingPincode"]').value = billingPincode;
+        document.querySelector('[name="ShippStateCode"]').value = billingStateCode;
+
+    }
+</script>
+
+
+

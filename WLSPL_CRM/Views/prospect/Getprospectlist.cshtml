@@ -1,0 +1,149 @@
+﻿@model List<WLSPL_CRM_2.Models.Prospect>
+
+@{
+	ViewData["Title"] = "Getprospectlist";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-startbar="light" data-bs-theme="light">
+
+<head>
+    <link rel="stylesheet" href="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.css">
+    <link rel="stylesheet" href="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.css">
+    <!-- App css -->
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Pending Lead -->
+        <div class="col-md-3 col-sm-6 col-12 mb-4">
+            <div class="card">
+                <div class="col-auto" style="height: 70px;background-color: #296600;">
+                    <h4 class="card-title text-white text-center" style="margin-top: 22px;">
+                        Uncontacted  Lead (@ViewBag.Pendingcount)
+                    </h4>
+                </div>
+            </div>
+
+            <div class="card-header">
+                @foreach (var prospect in Model)
+                {
+                    if (prospect.Stage == "Pending Lead")
+                    {
+                        <div class="card mb-3 border">
+                            <div class="card-body">
+                                <p>
+                                    <strong>@prospect.City</strong> &nbsp; , &nbsp; <strong>@prospect.State</strong>
+                                </p>
+                                <p style="margin-bottom: 0;">
+                                    <strong>@prospect.CreatedOn.ToString("MM/dd/yyyy HH:mm:ss")</strong>
+                                </p>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Discussion -->
+        <div class="col-md-3 col-sm-6 col-12 mb-4">
+            <div class="card">
+                <div class="col-auto" style="height: 70px;background-color: #b97300;">
+                    <h4 class="card-title text-white text-center" style="margin-top: 22px;">
+                        Follow-up (@ViewBag.Discussioncount)
+                    </h4>
+                </div>
+            </div>
+
+            <div class="card-header">
+                @foreach (var prospect in Model)
+                {
+                    if (prospect.Stage == "Discussion")
+                    {
+                        <div class="card mb-3 border">
+                            <div class="card-body">
+                                <p>
+                                    <strong>@prospect.City</strong> &nbsp; , &nbsp; <strong>@prospect.State</strong>
+                                </p>
+                                <p style="margin-bottom: 0;">
+                                    <strong>@prospect.CreatedOn.ToString("MM/dd/yyyy HH:mm:ss")</strong>
+                                </p>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Finalize -->
+        <div class="col-md-3 col-sm-6 col-12 mb-4">
+            <div class="card">
+                <div class="col-auto" style="height: 70px;background-color: #00ada3;">
+                    <h4 class="card-title text-white text-center" style="margin-top: 22px;">
+                        Closed/Matured (@ViewBag.Finalizecount)
+                    </h4>
+                </div>
+            </div>
+
+            <div class="card-header">
+                @foreach (var prospect in Model)
+                {
+                    if (prospect.Stage == "Finalize")
+                    {
+                        <div class="card mb-3 border">
+                            <div class="card-body">
+                                <p>
+                                    <strong>@prospect.City</strong> &nbsp; , &nbsp; <strong>@prospect.State</strong>
+                                </p>
+                                <p style="margin-bottom: 0;">
+                                    <strong>@prospect.CreatedOn.ToString("MM/dd/yyyy HH:mm:ss")</strong>
+                                </p>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+
+        <!-- Cancel Party -->
+        <div class="col-md-3 col-sm-6 col-12 mb-4">
+            <div class="card">
+                <div class="col-auto" style="height: 70px;background-color: #ad1818;">
+                    <h4 class="card-title text-white text-center" style="margin-top: 22px;">
+                        NI (Not Interested) (@ViewBag.Cancelpartycount)
+                    </h4>
+                </div>
+            </div>
+
+            <div class="card-header">
+                @foreach (var prospect in Model)
+                {
+                    if (prospect.Stage == "Cancel Party")
+                    {
+                        <div class="card mb-3 border">
+                            <div class="card-body">
+                                <p>
+                                    <strong>@prospect.City</strong> &nbsp; , &nbsp; <strong>@prospect.State</strong>
+                                </p>
+                                <p style="margin-bottom: 0;">
+                                    <strong>@prospect.CreatedOn.ToString("MM/dd/yyyy HH:mm:ss")</strong>
+                                </p>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        </div>
+    </div> <!-- End Row -->
+</div> <!-- End Container -->
+
+<script src="~/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="~/assets/libs/simplebar/simplebar.min.js"></script>
+<script src="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.js"></script>
+<script src="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.js"></script>
+<script src="~/assets/js/pages/editable.init.js"></script>
+<script src="~/assets/js/app.js"></script>

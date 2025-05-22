@@ -1,0 +1,127 @@
+﻿@model WLSPL_CRM_2.Models.RegisterUser
+@{
+	Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-startbar="light" data-bs-theme="light">
+<!-- Mirrored from mannatthemes.com/rizz/default/auth-register.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 26 Oct 2024 09:38:27 GMT -->
+<head>
+	<meta charset="utf-8" />
+	<title>Rizz | Rizz - Admin & Dashboard Template</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+	<meta content="" name="author" />
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<!-- App favicon -->
+	<link rel="shortcut icon" href="assets/images/favicon.ico">
+	<!-- App css -->
+	<link href="../assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+	<link href="../assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+	<link href="../assets/css/app.min.css" rel="stylesheet" type="text/css" />
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate-unobtrusive/4.0.0/jquery.validate.unobtrusive.min.js"></script>
+	<script>
+		function onSupplierNameChange() {
+			debugger;
+			console.log("Clicked on Confirm Password field");
+
+			var password = document.getElementById("userpassword").value;
+			var confirmPassword = document.getElementById("Confirmpassword").value;
+
+
+			if (password !== confirmPassword) {
+
+				document.getElementById("error-message").innerText = "Passwords do not match";
+				document.getElementById("error-message").style.display = "inline";
+			} else {
+
+				document.getElementById("error-message").innerText = "";
+				document.getElementById("error-message").style.display = "none";
+			}
+		}
+	</script>
+</head>
+
+
+<!-- Top Bar Start -->
+<body>
+	<div class="container-xxl">
+		<div class="row vh-100 d-flex justify-content-center">
+			<div class="col-12 align-self-center">
+				<div class="card-body">
+					<div class="row">
+						<div class="col-lg-4 mx-auto">
+							<div class="card">
+								<div class="card-body p-0 bg-black auth-header-box rounded-top">
+									<div class="text-center p-3">
+										<a href="index.html" class="logo logo-admin">
+											<img src="~/assets/images/WLSPL_MAIN_LOGO.png" height="50" alt="logo" class="auth-logo">
+										</a>
+										<h4 class="mt-3 mb-1 fw-semibold text-white fs-18">Create an account</h4>
+										@* <p class="text-muted fw-medium mb-0">Enter your detail to Create your account today.</p> *@
+									</div>
+								</div>
+								<div class="card-body pt-0">
+									<form class="my-4" method="post" asp-action="UserRegister">
+										@Html.AntiForgeryToken()
+										<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+										<div class="form-group mb-2">
+											<label class="form-label" for="username">Username</label>
+											<input type="text" class="form-control" id="username" name="username" placeholder="Enter username" asp-for="UserName">
+											<span asp-validation-for="UserName" class="text-danger"></span>
+										</div><!--end form-group-->
+
+										<div class="form-group mb-2">
+											<label class="form-label" for="useremail">Email</label>
+											<input type="email" class="form-control" id="useremail" name="Email_ID" placeholder="Enter email" asp-for="EmailId">
+											<span asp-validation-for="EmailId" class="text-danger"></span>
+										</div><!--end form-group-->
+
+										<div class="form-group mb-2">
+											<label class="form-label" for="userpassword">Password</label>
+											<input type="password" class="form-control" name="password" id="userpassword" placeholder="Enter password" asp-for="Password">
+											<span asp-validation-for="Password" class="text-danger"></span>
+										</div><!--end form-group-->
+
+										<div class="form-group mb-2">
+											<label class="form-label" for="Confirmpassword">ConfirmPassword</label>
+											<input type="password" class="form-control" name="ConfirmPassword" id="Confirmpassword" placeholder="Enter Confirm password" onblur="onSupplierNameChange()" asp-for="ConfirmPassword">
+											<span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+										</div><!--end form-group-->
+
+										<div id="error-message" style="display: none; color: red; font-size: 12px;"></div>
+
+
+										<div class="form-group mb-2">
+											<label class="form-label" for="mobileNo">Mobile Number</label>
+											<input type="tel" class="form-control" id="MobileNo" name="MobileNo" placeholder="Enter Mobile Number" asp-for="MobileNo" maxlength="10">
+										</div><!--end form-group-->
+
+
+										<div class="form-group mb-0 row">
+											<div class="col-12">
+												<div class="d-grid mt-3">
+													<input type="submit" class="btn btn-primary" value="Register">
+												</div>
+											</div><!--end col-->
+										</div>
+									</form><!--end form-->
+									<div class="text-center">
+										<p class="text-muted">Already have an account ?  <a href="/Login/Index" class="text-primary ms-2">Log in</a></p>
+									</div>
+								</div>
+							</div>
+						</div><!--end col-->
+					</div><!--end row-->
+				</div><!--end card-body-->
+			</div><!--end col-->
+		</div><!--end row-->
+	</div>
+</body>
+</html>
+
+
+
+

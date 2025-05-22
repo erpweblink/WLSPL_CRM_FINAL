@@ -1,0 +1,219 @@
+﻿@model List<WLSPL_CRM_2.Models.Workorder>
+@{
+    ViewData["Title"] = "Getworkorderlist";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-startbar="light" data-bs-theme="light">
+
+<!-- Mirrored from mannatthemes.com/rizz/default/tables-editable.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 26 Oct 2024 09:38:22 GMT -->
+<head>
+
+    <link rel="stylesheet" href="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.css">
+    <link rel="stylesheet" href="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.css">
+    <!-- App css -->
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" />
+
+
+</head>
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="card">
+            @* <div class="card-header">
+            <div class="row align-items-center">
+            <div class="col">
+            <h4 class="card-title">Add Company</h4>
+            </div>
+            </div>
+            </div> *@
+            <div class="card-body pt-0">
+
+                <div class="card">
+                    <div class="card-header">
+                        <div class="row align-items-center">
+                            <div class="col-auto">
+                                <h4 class="card-title"> Work-Order List </h4>
+                            </div><!--end col-->
+                          <!--end col-->
+                        </div>  <!--end row-->
+                    </div><!--end card-header-->
+                    <div class="card-body pt-0">
+                        <form method="post" asp-action="DeleteLead">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>Sr.No</th>
+                                            <th>Work Order No</th>
+                                            <th>Company Name</th>
+                                            <th>Work_Order Date</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @{
+                                            int srNo = 1;
+                                        }
+                                        @foreach (var WO in Model)
+                                        {
+                                            <tr>
+                                                <td>@srNo</td>
+                                                <td>@WO.WONO</td>
+                                                <td>@WO.Companyname</td>
+                                                <td>@WO.WOcreateDate</td>
+                                                <td>
+                                                    <a href="@Url.Action("GetWorkorderbyID", "Workorder", new { id = WO.ID })" class="btn btn-success btn-sm" title="Edit">
+                                                        <i class="fas fa-pencil-alt"></i>
+                                                    </a>
+                                                    &nbsp;
+                                                    <a href="@Url.Action("Deleteworkorder", "Workorder",new { id = WO.ID })" class="btn btn-danger btn-sm" title="Delete">
+                                                        <i class="fas fa-trash-alt"></i>
+                                                    </a>
+
+                                                    <a href="@Url.Action("CreateWorkorder", "Workorder", new { ID = Uri.EscapeDataString(WO.WONO) })" class="btn btn-danger btn-sm" title="Create W/O">
+                                                        <i class="fa fa-plus"></i>
+                                                    </a>
+
+
+                                                </td>
+                                            </tr>
+                                            srNo++;
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </form>
+                    </div><!--end card-body-->
+                </div><!--end card-->
+
+                <div class="page-wrapper">
+                    <!-- Page Content-->
+                    <div class="page-content">
+                        <div class="container-xxl">
+
+                            <div class="row justify-content-center">
+                                <div class="col-12">
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="offcanvas offcanvas-end" tabindex="-1" id="Appearance" aria-labelledby="AppearanceLabel">
+                            <div class="offcanvas-header border-bottom justify-content-between">
+                                <h5 class="m-0 font-14" id="AppearanceLabel">Appearance</h5>
+                                <button type="button" class="btn-close text-reset p-0 m-0 align-self-center" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body">
+                                <h6>Account Settings</h6>
+                                <div class="p-2 text-start mt-3">
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="settings-switch1">
+                                        <label class="form-check-label" for="settings-switch1">Auto updates</label>
+                                    </div><!--end form-switch-->
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="settings-switch2" checked>
+                                        <label class="form-check-label" for="settings-switch2">Location Permission</label>
+                                    </div><!--end form-switch-->
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="settings-switch3">
+                                        <label class="form-check-label" for="settings-switch3">Show offline Contacts</label>
+                                    </div><!--end form-switch-->
+                                </div><!--end /div-->
+                                <h6>General Settings</h6>
+                                <div class="p-2 text-start mt-3">
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="settings-switch4">
+                                        <label class="form-check-label" for="settings-switch4">Show me Online</label>
+                                    </div><!--end form-switch-->
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="settings-switch5" checked>
+                                        <label class="form-check-label" for="settings-switch5">Status visible to all</label>
+                                    </div><!--end form-switch-->
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="settings-switch6">
+                                        <label class="form-check-label" for="settings-switch6">Notifications Popup</label>
+                                    </div><!--end form-switch-->
+                                </div><!--end /div-->
+                            </div><!--end offcanvas-body-->
+                        </div>
+                        <!--end Rightbar/offcanvas-->
+                        <!--end Rightbar-->
+
+                    </div>
+                    <!-- end page content -->
+                </div>
+
+                <div class="page-wrapper">
+                    <!-- Page Content-->
+                    <div class="page-content">
+                        <div class="container-xxl">
+
+                            <div class="row justify-content-center">
+                                <div class="col-12">
+                                </div> <!--end col-->
+                            </div><!--end row-->
+                        </div><!-- container -->
+                        <!--Start Rightbar-->
+                        <!--Start Rightbar/offcanvas-->
+                        <div class="offcanvas offcanvas-end" tabindex="-1" id="Appearance" aria-labelledby="AppearanceLabel">
+                            <div class="offcanvas-header border-bottom justify-content-between">
+                                <h5 class="m-0 font-14" id="AppearanceLabel">Appearance</h5>
+                                <button type="button" class="btn-close text-reset p-0 m-0 align-self-center" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+                            </div>
+                            <div class="offcanvas-body">
+                                <h6>Account Settings</h6>
+                                <div class="p-2 text-start mt-3">
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="settings-switch1">
+                                        <label class="form-check-label" for="settings-switch1">Auto updates</label>
+                                    </div><!--end form-switch-->
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="settings-switch2" checked>
+                                        <label class="form-check-label" for="settings-switch2">Location Permission</label>
+                                    </div><!--end form-switch-->
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="settings-switch3">
+                                        <label class="form-check-label" for="settings-switch3">Show offline Contacts</label>
+                                    </div><!--end form-switch-->
+                                </div><!--end /div-->
+                                <h6>General Settings</h6>
+                                <div class="p-2 text-start mt-3">
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="settings-switch4">
+                                        <label class="form-check-label" for="settings-switch4">Show me Online</label>
+                                    </div><!--end form-switch-->
+                                    <div class="form-check form-switch mb-2">
+                                        <input class="form-check-input" type="checkbox" id="settings-switch5" checked>
+                                        <label class="form-check-label" for="settings-switch5">Status visible to all</label>
+                                    </div><!--end form-switch-->
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" id="settings-switch6">
+                                        <label class="form-check-label" for="settings-switch6">Notifications Popup</label>
+                                    </div><!--end form-switch-->
+                                </div><!--end /div-->
+                            </div><!--end offcanvas-body-->
+                        </div>
+                        <!--end Rightbar/offcanvas-->
+                        <!--end Rightbar-->
+
+                    </div>
+                    <!-- end page content -->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="~/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="~/assets/libs/simplebar/simplebar.min.js"></script>
+<script src="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.js"></script>
+<script src="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.js"></script>
+<script src="~/assets/js/pages/editable.init.js"></script>
+<script src="~/assets/js/app.js"></script>
+
+

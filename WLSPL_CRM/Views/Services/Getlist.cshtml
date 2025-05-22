@@ -1,0 +1,153 @@
+﻿@model List<WLSPL_CRM_2.Models.Services>
+@{
+    ViewData["Title"] = "Getlist";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var departments = new[]
+    {
+        new { Name = "WEB_DEVLOPMENT", Color = "#296600", Match = new[] { "WEB_DEVLOPMENT" } },
+        new { Name = "SEO", Color = "tomato", Match = new[] { "SEO" } },
+        new { Name = "SMO", Color = "#00ada3", Match = new[] { "SMO" } },
+        new { Name = "Software", Color = "brown", Match = new[] { "Software" } },
+        new { Name = "Graphics Design/Video Editing", Color = "grey", Match = new[] { "Graphics", "Graphics Design", "Video Editing", "Graphics Design/Video Editing" } }
+    };
+
+}
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-startbar="light" data-bs-theme="light">
+
+<head>
+    <link rel="stylesheet" href="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.css">
+    <link rel="stylesheet" href="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.css">
+    <!-- App css -->
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
+    <style>
+        .page-title {
+            font-size: 2.5rem; /* Slightly smaller title size */
+            font-weight: 700; /* Bold title */
+            color: #1e90ff; /* Bright blue color */
+            margin-bottom: 10px; /* Adds space below the title */
+            text-transform: uppercase; /* Makes the title uppercase for emphasis */
+            background: linear-gradient(90deg, #ff7e5f, #feb47b); /* Gradient effect */
+            -webkit-background-clip: text; /* Text gradient */
+            color: transparent; /* Ensures the gradient is applied correctly */
+            text-align: center;
+        }
+
+        .page-subtitle {
+            font-size: 1rem; /* Smaller subtitle size */
+            color: #555; /* Soft gray color for the subtitle */
+            font-style: italic; /* Adds a nice contrast to the title */
+            text-align: center; /* Center-aligns the subtitle */
+            margin-bottom: 20px; /* Adds space between the subtitle and content */
+        }
+
+        /* Optional: Customize card title for better readability */
+        .card-title {
+            font-size: 1.20rem; /* Smaller card title size */
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Responsiveness */
+        
+
+        .page-subtitle {
+            font-size: 0.875rem; /* Adjust subtitle font size for mobile */
+        }
+
+        }
+    </style>
+
+
+</head>
+
+
+
+<body>
+    <div class="container mt-4">
+        <div class="text-center mb-4">
+            <h1 class="page-title">Our Packages</h1>
+            <p class="page-subtitle">Explore our services and choose the best plan for your business needs</p>
+        </div>
+        <div class="row">
+            @* Loop through departments and display them with proper responsiveness *@
+            @foreach (var dept in departments)
+            {
+                var deptServices = Model.Where(s => dept.Match.Contains(s.Department)).ToList();
+
+                @* Set col-md-3 for "WEB_DEVLOPMENT" and "Graphics Design/Video Editing" and col-md-2 for others *@
+                var colSize = (dept.Name == "WEB_DEVLOPMENT" || dept.Name == "Graphics Design/Video Editing") ? "col-md-3 col-sm-6 col-12" : "col-md-2 col-sm-6 col-12";
+                <div class="@colSize">
+                    <div class="card mb-3">
+                        <div class="col-auto" style="height: 70px; background-color: @dept.Color;">
+                            <h4 class="card-title text-white text-center mt-3">
+                                @* Add the appropriate icon for each department *@
+                                <i class="fas @GetIconClass(dept.Name)" style="margin-right: 8px;"></i>
+                                @dept.Name
+                            </h4>
+                        </div>
+                    </div>
+
+                    <div class="card-header">
+                        <div class="row">
+                            @* Loop through the services of this department and display each one in a nested row *@
+                            @foreach (var services in deptServices)
+                            {
+                                <div class="col-12">
+                                    <div class="card mb-3 border">
+                                        <div class="card-body">
+                                            <div class="service-info">
+                                                <div class="service-item">
+                                                    <strong>Service= </strong>
+                                                    <span>@services.ServicesDesc</span>
+                                                </div>
+                                                <div class="price-item">
+                                                    <strong>Price= </strong>
+                                                    <span>@services.Price Rs</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</body>
+
+@* Helper method to return the appropriate icon class for each department *@
+@functions {
+    public string GetIconClass(string deptName)
+    {
+        switch (deptName)
+        {
+            case "WEB_DEVLOPMENT":
+                return "fa-laptop-code"; // Icon for Web Development
+            case "SEO":
+                return "fa-search"; // Icon for SEO
+            case "SMO":
+                return "fa-share-alt"; // Icon for SMO (Social Media Optimization)
+            case "Software":
+                return "fa-cogs"; // Icon for Software
+            case "Graphics Design/Video Editing":
+                return "fa-video"; // Icon for Graphics Design/Video Editing
+            default:
+                return "fa-question"; // Default icon in case of an unknown department
+        }
+    }
+}
+
+
+
+
+</html>

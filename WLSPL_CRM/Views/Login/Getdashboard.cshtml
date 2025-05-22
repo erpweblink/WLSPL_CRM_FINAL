@@ -1,0 +1,506 @@
+﻿@model (List<WLSPL_CRM_2.Models.RegisterUser> USer, WLSPL_CRM_2.Models.RegisterUser Info)
+
+@{
+	ViewData["Title"] = "Getdashboard";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<link rel="stylesheet" href="~/assets/libs/vanilla-datatables/vanilla-dataTables.min.css">
+<link rel="stylesheet" href="~/assets/libs/vanilla-datatables-editable/datatable.editable.min.css">
+<!-- App css -->
+<link href="~/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/css/icons.min.css" rel="stylesheet" type="text/css" />
+<link href="~/assets/css/app.min.css" rel="stylesheet" type="text/css" />
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	function CheckPending(){
+		var count = @Model.Info.pendingCount
+		if(count>0){
+			$.ajax({
+						url: '@Url.Action("ShowList", "Login")',
+						type: 'GET',
+						data: { count: count},
+						success: function (data) {
+							window.location.href = "/Login/ShowList";
+						},
+						error: function (xhr, status, error) {
+							console.log('Error: ' + error);
+						}
+					});
+		}
+	}
+</script>
+<div class="row">
+	<div class="col-md-12">
+		<div class="card">
+			<div class="card-header">
+				<div class="row align-items-center">
+					<div class="col-auto">
+						<h4 class="card-title">User List </h4>
+					</div><!--end col-->
+			@* 		<div class="col-auto">
+						<input type="text" class="form-control" placeholder="Enter Department" id="departmentName" />
+					</div> *@
+					<div class="col-auto ms-auto">
+						<button type="button" id="btnShowNotification" onclick="CheckPending()" class="btn btn-link position-relative p-0 border-0">
+							<i class="fas fa-bell" style="font-size: 30px; color: #0755A1;"></i>
+							<span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notificationCount">
+								@Model.Info.pendingCount
+							</span>
+						</button>
+					</div>
+				</div>  <!--end row-->
+			</div><!--end card-header-->
+			<div class="card-body pt-0">
+				<div class="table-responsive">
+					<table class="table">
+						<thead class="table-light">
+							<tr>
+								<th>First Name</th>
+								<th>Last Name</th>
+								<th>User Name</th>
+								<th>Email_ID</th>
+								<th>Mobile No.</th>
+								<th>Department</th>
+								<th>Userole</th>
+								<th>Action</th>
+							</tr>
+						</thead>
+						<tbody>
+							@foreach (var user in Model.USer)
+							{
+								<tr>
+									<td>@user.FirstName</td>
+									<td>@user.LastName</td>
+									<td>@user.UserName</td>
+									<td>@user.EmailId</td>
+									<td>@user.MobileNo</td>
+									<td>@user.Department</td>
+									<td>@user.Role</td>
+									<td>
+										<button type="button" class="btn btn-warning"
+												data-bs-toggle="modal" data-bs-target="#editUserModal"
+												onclick="populateModal(@user.ID, '@user.UserName', '@user.EmailId', '@user.MobileNo', '@user.Department', '@user.Role','@((@user.IsApproved ?? true).ToString().ToLower())','@((@user.IsActive ?? true).ToString().ToLower())','@user.RelationID')">
+											Edit
+										</button>
+										@*  <a href="@Url.Action("Edit", "User", new { id = user.ID })" class="btn btn-primary btn-sm">Edit</a> *@
+									</td>
+								</tr>
+							}
+						</tbody>
+					</table>
+				</div>
+
+				<!-- Mirrored from mannatthemes.com/rizz/default/tables-editable.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 26 Oct 2024 09:38:24 GMT -->
+				<div class="modal fade" id="editUserModal" tabindex="-1" aria-labelledby="editUserModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								<form id="editUserForm" method="post" asp-action="UpdateDeatails" asp-controller="Login">
+									<input type="hidden" id="userId" name="ID" />
+									<div class="mb-3">
+										<label for="userName" class="form-label">User Name</label>
+										<input type="text" class="form-control" id="userName" readonly />
+									</div>
+									<div class="mb-3">
+										<label for="userEmail" class="form-label">Email</label>
+										<input type="email" class="form-control" id="userEmail" readonly />
+									</div>
+									<div class="mb-3">
+										<label for="userMobile" class="form-label">Mobile No.</label>
+										<input type="text" class="form-control" id="userMobile" readonly />
+									</div>
+									<div class="row">
+										<div class="col-md-6 mb-3">
+											<label for="userRole" class="form-label">User Role</label>
+											<select class="form-control" id="userRole" name="userRole" onchange="onUserRoleChange()">
+												<option value="Admin">Admin</option>
+												<option value="Sub Admin">Sub-Admin</option>
+												<option value="Manager">Manager</option>
+												<option value="Team Lead">Team Leader</option>
+												<option value="Executive">Executive</option>
+											</select>
+											<span id="userRoleError" class="text-danger" style="display:none;">Please select a user role.</span>
+										</div>
+										<div class="col-md-6 mb-3">
+											<label for="userdepartment" class="form-label">User Department</label>
+											<select class="form-control" id="userdepartment" name="userdepartment" onchange="onUserRoleChange()">
+												<option value="Admin">Admin</option>
+												<option value="All">Sub Admin</option>
+												<option value="HR">HR</option>
+												<option value="SALES">Sales</option>
+												<option value="WEB">Web Devlopment</option>
+												<option value="SEO">SEO</option>
+												<option value="SMO">SMO</option>
+												<option value="GRAPHICS">Graphics Designer</option>
+												<option value="SOFTWARE">Software Devlopment</option>
+											</select>
+											<span id="userDepartmentError" class="text-danger" style="display:none;">Please select a department.</span>
+										</div>
+									</div>
+									<div class="col-md-12 mb-3" id="divSubAdmin" style="display:none;">
+										<label for="subAdmin" class="form-label">Reporting Person</label>
+										<select class="form-control" id="subAdmin" name="subAdmin">
+											<option value="">--Select Reporting Person--</option>
+											@foreach (var item in ViewBag.SubAdminList as List<SelectListItem>)
+											{
+												<option value="@item.Value">@item.Text</option>
+											}
+										</select>
+										<span id="subAdminError" class="text-danger" style="display:none;">Please select a reporting person.</span>
+									</div>
+									<div class="row">
+										<div class="col-md-6 mb-3" id="divManagers" style="display:none;">
+											<label for="Managers" class="form-label">Reporting Manager</label>
+											<select class="form-control" id="Manager" name="Manager" onchange="GetTLs()">
+												<option value="">--Select Reporting Manager--</option>
+												@foreach (var item in ViewBag.Manager as List<SelectListItem>)
+												{
+													<option value="@item.Value">@item.Text</option>
+												}
+											</select>
+											<span id="managerError" class="text-danger" style="display:none;">Please select a reporting manager.</span>
+										</div>
+										<div class="col-md-6 mb-3" id="divTeamLead" style="display:none;">
+											<label for="teamLead" class="form-label">Reporting TL</label>
+											<select class="form-control" id="teamLead" name="teamLead">
+												<option value="">--Select Reporting TL--</option>
+												@foreach (var item in ViewBag.TeamLead as List<SelectListItem>)
+												{
+													<option value="@item.Value">@item.Text</option>
+												}
+											</select>
+											<span id="teamLeadError" class="text-danger" style="display:none;">Please select a reporting TL.</span>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-md-6 mb-3">
+											<span>
+												<input type="checkbox" id="IsActivate" name="IsActivate" />
+												<b> IsActivate</b>
+											</span>
+										</div>
+										<div class="col-md-6 mb-3">
+											<span>
+												<input type="checkbox" id="IsApproved" name="IsApproved" />
+												<b> IsApproved</b>
+											</span>
+										</div>
+									</div>
+									<div class="modal-footer">
+										<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+										<button type="submit" class="btn btn-primary">Save changes</button>
+									</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div><!--end card-body-->
+		</div><!--end card-->
+	</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	function populateModal(userId, userName, userEmail, userMobile, Department, userRole, isApproved, isActivate,RelationID) {
+		debugger;
+		document.getElementById('userId').value = userId;
+		document.getElementById('userName').value = userName;
+		document.getElementById('userEmail').value = userEmail;
+		document.getElementById('userMobile').value = userMobile;
+		document.getElementById('userRole').value = userRole;
+		document.getElementById('userdepartment').value = Department;
+		if(userRole === "Executive"){
+			$('#divSubAdmin').hide();
+			$('#divManagers').show();
+			$('#divTeamLead').show();
+			}else if(userRole === "Team Lead"){
+			$('#divSubAdmin').hide();
+			$('#divManagers').show();
+			$('#divTeamLead').hide();
+			}else if(userRole ==="Manager" || userRole ==="Sub Admin"){
+			$('#divSubAdmin').show();
+			$('#divManagers').hide();
+			$('#divTeamLead').hide();
+			}
+			if(userRole != "" && Department != ""){
+			 GetFullUserDetails(userId);
+			 $('#Manager').prop("disabled", false);
+			 $('#subAdmin').prop("disabled", false);
+			}
+		document.getElementById('IsApproved').checked = isApproved === true || isApproved === "true" || isApproved == 1;
+	document.getElementById('IsActivate').checked = isActivate === true || isActivate === "true" || isActivate == 1;
+	}
+	function GetFullUserDetails(userId){
+		if(userId != ""){
+			$.ajax({
+				url: '/Login/GetFulluser',
+				type: 'GET',
+				data: {
+					userId: userId
+				},
+				success: function (data) {
+					debugger;
+					GetReportingPerson(data.teamLeadId,data.subAdminId,data.managerId);
+				},
+				error: function (xhr, status, error) {
+					console.log('Error: ' + error);
+				}
+			});
+		}
+	}
+	function GetReportingPerson(TeamLID, SubAdminId, ManagerId) {
+		var department = document.getElementById('userdepartment').value;
+		var role = document.getElementById('userRole').value;
+
+		if (department !== "" && role === "") {
+			alert("Please select a role first.");
+			return;
+		}
+		if (role === "") return;
+
+		$.ajax({
+			url: '/Login/GetALLData',
+			type: 'GET',
+			data: { role: role, department: department },
+			success: function (data) {
+				$('#Manager').html('');
+				$('#subAdmin').html('');
+				$('#teamLead').html('');
+				$('#divManagers').hide();
+				$('#divSubAdmin').hide();
+				$('#divTeamLead').hide();
+
+				if (role === "Manager") {
+					if (data.subAdminList?.length > 0) {
+						var subAdmins = `<option value="">--Select Reporting Person--</option>` +
+							data.subAdminList.map(x => `<option value="${x.value}">${x.text}</option>`).join('');
+						$('#subAdmin').html(subAdmins);
+						$('#divSubAdmin').show();
+						if (SubAdminId) $('#subAdmin').val(SubAdminId);
+					}
+				}
+
+				if (role === "Team Lead") {
+					if (data.managersList?.length > 0) {
+						var managers = `<option value="">--Select Reporting Manager--</option>` +
+							data.managersList.map(x => `<option value="${x.value}">${x.text}</option>`).join('');
+						$('#Manager').html(managers);
+						$('#divManagers').show();
+						if (ManagerId) $('#Manager').val(ManagerId);
+					}
+
+					if (data.subAdminList?.length > 0) {
+						var subAdmins = `<option value="">--Select Sub Admin--</option>` +
+							data.subAdminList.map(x => `<option value="${x.value}">${x.text}</option>`).join('');
+						$('#subAdmin').html(subAdmins);
+						$('#divSubAdmin').show();
+						if (SubAdminId) $('#subAdmin').val(SubAdminId);
+					}
+				}
+
+
+
+
+		if (role === "Executive") {
+		if (data.managersList?.length > 0) {
+			var managers = `<option value="">--Select Reporting Manager--</option>` +
+				data.managersList.map(x => `<option value="${x.value}">${x.text}</option>`).join('');
+			$('#Manager').html(managers);
+			$('#divManagers').show();
+			if (ManagerId) $('#Manager').val(ManagerId);
+		} else {
+			$('#Manager').html('<option disabled selected>No Managers available</option>');
+			$('#divManagers').show();
+		}
+		if (data.tlsList?.length > 0) {
+			var tls = `<option value="">--Select Reporting TL--</option>` +
+				data.tlsList.map(x => `<option value="${x.value}">${x.text}</option>`).join('');
+			$('#teamLead').html(tls);
+			if (TeamLID) $('#teamLead').val(TeamLID);
+		} else {
+			$('#teamLead').html('<option disabled selected>No TL available for this Executive</option>');
+		}
+		$('#divTeamLead').show();
+		if (data.subAdminList?.length > 0) {
+			var subAdmins = `<option value="">--Select Sub Admin--</option>` +
+				data.subAdminList.map(x => `<option value="${x.value}">${x.text}</option>`).join('');
+			$('#subAdmin').html(subAdmins);
+			if (SubAdminId) $('#subAdmin').val(SubAdminId);
+		} else {
+			$('#subAdmin').html('<option disabled selected>No Sub Admin available</option>');
+		}
+		$('#divSubAdmin').show();
+	}
+
+			},
+			error: function (xhr, status, error) {
+				console.log('Error: ' + error);
+			}
+		});
+	}
+	function GetTLs() {
+		var department = document.getElementById('userdepartment').value;
+		var role = document.getElementById('userRole').value;
+		var Manager = document.getElementById('Manager').value;
+
+		if (role !== "" && department !== "" && Manager !== "") {
+			$.ajax({
+				url: '/Login/GetTLS',
+				type: 'GET',
+				data: {
+					role: role,
+					department: department,
+					Manager: Manager
+				},
+				success: function (data) {
+					if (data.tlsList && data.tlsList.length > 0) {
+						var AdminList = `<option value="">--Select Reporting TL--</option>` +
+							data.tlsList.map(function (address) {
+								return `<option value="${address.value}">${address.text}</option>`;
+							}).join('');
+						$('#teamLead').html(AdminList);
+						$('#divTeamLead').show();
+					}
+
+					$('#divManagers').show();
+
+					// Only hide Sub Admin if role is Executive
+					if (role === "Executive") {
+						$('#divManagers').show();
+
+					}
+					// Keep Sub Admin visible for Team Lead
+					else if (role === "Team Lead") {
+						$('#divSubAdmin').show();
+
+
+					}
+				},
+				error: function (xhr, status, error) {
+					console.log('Error: ' + error);
+				}
+			});
+		}
+	}
+
+	function onUserRoleChange() {
+		const role = document.getElementById('userRole').value;
+		const department = document.getElementById('userdepartment').value;
+	const userId = document.getElementById('userId').value;
+		if (role !== "" && department !== "" && userId !== "") {
+			GetReportingPersonSimple(role, department);
+			GetFullUserDetails(userId);
+		}
+	}
+
+	function GetReportingPersonSimple(role, department) {
+		// Reset validation errors
+		resetValidationMessages();
+		$.ajax({
+			url: '/Login/GetALLData',
+			type: 'GET',
+			data: { role: role, department: department },
+			success: function (data) {
+				// Clear and re-populate based on the role
+				$('#Manager').html('');
+				$('#subAdmin').html('');
+				$('#teamLead').html('');
+				$('#divManagers').hide();
+				$('#divSubAdmin').hide();
+				$('#divTeamLead').hide();
+
+				if (role === "Manager") {
+					if (data.subAdminList?.length > 0) {
+						$('#subAdmin').html(`<option value="">--Select Reporting Person--</option>` +
+							data.subAdminList.map(x => `<option value="${x.value}">${x.text}</option>`).join(''));
+						$('#divSubAdmin').show();
+					}
+				} else if (role === "Team Lead") {
+					if (data.managersList?.length > 0) {
+						$('#Manager').html(`<option value="">--Select Reporting Manager--</option>` +
+							data.managersList.map(x => `<option value="${x.value}">${x.text}</option>`).join(''));
+						$('#divManagers').show();
+						$('#divSubAdmin').show();
+						$('#subAdmin').prop("disabled", true);
+					}
+				} else if (role === "Executive") {
+					if (data.managersList?.length > 0) {
+						$('#Manager').html(`<option value="">--Select Reporting Manager--</option>` +
+							data.managersList.map(x => `<option value="${x.value}">${x.text}</option>`).join(''));
+						$('#divManagers').show();
+						$('#divSubAdmin').show();
+						$('#subAdmin').prop("disabled", true);
+						$('#divTeamLead').show();
+					}
+					if (data.tlsList?.length > 0) {
+						$('#teamLead').html(`<option value="">--Select Reporting TL--</option>` +
+							data.tlsList.map(x => `<option value="${x.value}">${x.text}</option>`).join(''));
+						$('#divTeamLead').show();
+					}
+				}
+			},
+			error: function (xhr, status, error) {
+				console.log('Error: ' + error);
+			}
+		});
+	}
+
+	function resetValidationMessages() {
+		// Reset error messages
+		$('#subAdminError').hide();
+		$('#managerError').hide();
+		$('#teamLeadError').hide();
+		$('#userRoleError').hide();
+		$('#userDepartmentError').hide();
+	}
+
+	function validateForm() {
+		var isValid = true;
+
+		var role = document.getElementById('userRole').value;
+		var department = document.getElementById('userdepartment').value;
+
+		// Validate User Role
+		if (role === "") {
+			$('#userRoleError').show();
+			isValid = false;
+		}
+
+		// Validate User Department
+		if (department === "") {
+			$('#userDepartmentError').show();
+			isValid = false;
+		}
+
+		// Validate dynamically shown dropdowns
+		if ($('#divSubAdmin').is(':visible') && $('#subAdmin').val() === "") {
+			$('#subAdminError').show();
+			isValid = false;
+		}
+
+		if ($('#divManagers').is(':visible') && $('#Manager').val() === "") {
+			$('#managerError').show();
+			isValid = false;
+		}
+
+		if ($('#divTeamLead').is(':visible') && $('#teamLead').val() === "") {
+			$('#teamLeadError').show();
+			isValid = false;
+		}
+
+		return isValid;
+	}
+
+	$("#editUserForm").submit(function (event) {
+		if (!validateForm()) {
+			event.preventDefault(); // Prevent form submission if validation fails
+			alert("Please fill all the required fields.");
+		}
+	});
+</script>
+

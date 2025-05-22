@@ -1,0 +1,30 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!-- Display SweetAlert Success Message -->
+
+@if (TempData["Save_Record"] != null)
+{
+
+
+    <!-- Include SweetAlert2 CSS and JS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.9/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.6.9/dist/sweetalert2.min.js"></script>
+@* 
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script> *@
+    <script type="text/javascript">
+        window.onload = function () {
+            Swal.fire({
+                position: 'top-center',
+                icon: 'success',
+                title: 'Updated Suucessfully',
+                showConfirmButton: false,
+                timer: 1500
+            })
+                ("@(TempData["Save_Record"])");
+        };
+    </script>
+}

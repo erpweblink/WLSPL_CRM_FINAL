@@ -1,0 +1,1097 @@
+﻿@{
+	ViewData["Title"] = "Getcomapnyform";
+	Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<div class="row">
+	<div class="col-md-12">
+		<div class="card">
+			<div class="card-header">
+				<div class="row align-items-center">
+					<div class="col">
+						<h4 class="card-title">Quotation </h4>
+					</div>
+				</div>
+			</div>
+
+			<div class="card-body pt-0">
+				@if (TempData["SuccessMessage"] != null)
+				{
+					<script>
+						Swal.fire({
+							icon: 'success',
+							title: 'Success!',
+							text: '@TempData["SuccessMessage"]',
+							showConfirmButton: true
+						});
+					</script>
+				}
+				@if (ViewBag.company == null)
+				{
+					<form method="post" id="invoiceForm">
+						<div class="card mb-4" style="color:red">
+							<div class="card-body">
+
+								@if (ViewBag.LeadCode != null)
+								{
+									<div class="row mb-2">
+										<div class="col-md-6">
+											<label for="leadcode" class="form-label">Lead Code</label>
+											<input type="text" id="leadCode" name="leadcode" class="form-control" value="@ViewBag.LeadCode" readonly="true" />
+										</div>
+									</div>
+								}
+								<div class="row mb-2">
+
+
+									<div class="col-md-6 position-relative">
+										<label for="CustomerName" class="form-label">Customer Name</label>
+										<small asp-validation-for="CompanyName" class="text-danger"></small>
+
+										@if (ViewBag.CompnayName == null)
+										{
+											<input type="text" id="companySearch" class="form-control" placeholder="Search Company Name"
+												   onkeyup="filterCompanyList()" onclick="toggleCompanyList()" autocomplete="off" />
+											<input type="hidden" name="CompanyName" id="CompanyNameHidden" />
+
+											<ul id="companyList" class="list-group position-absolute w-100 mt-1"
+												style="display:none; max-height:200px; overflow-y:auto; z-index:1000;">
+												@foreach (var Company in Model)
+												{
+													<li class="list-group-item list-group-item-action"
+														onclick="selectCompany('@Company.CompanyName')">
+														@Company.CompanyName
+													</li>
+												}
+											</ul>
+
+										}
+										else
+										{
+											<input class="form-control" type="text" placeholder="Enter Customer Name" name="CompName" id="CompName" value="@ViewBag.CompnayName" readonly="true" />
+										}
+
+
+
+									</div>
+
+
+
+
+									<div class="col-md-6" id="dvGSTNo">
+										<label for="GSTNo" class="form-label">GST Number</label>  <a href="https://services.gst.gov.in/services/searchtp" target="_blank" class="btn btn-link">(Check GST Number)</a>
+										<input class="form-control" type="text" placeholder="GST Number" name="GSTNo" id="GSTNo" readonly />
+										<small asp-validation-for="GSTNo" class="text-danger"></small>
+										<div id="gst-error" style="color: red; display: none;">Please enter a valid GST number.</div>
+									</div>
+								</div>
+								<div class="row mb-2">
+									<div class="col-md-6">
+										<label for="QuotationDate" class="form-label">Quotation Date</label>
+										<input class="form-control" type="date" placeholder="Enter Quotation Date" name="QuotationDate" id="QuotationDate" readonly />
+										<small asp-validation-for="QuotationDate" class="text-danger"></small>
+									</div>
+									<div class="col-md-6">
+										<label for="Validdate" class="form-label">Valid Till</label>
+										<input class="form-control" type="date" placeholder="Enter Valid Till" name="Validdate" id="Validdate" readonly />
+										<small asp-validation-for="Validdate" class="text-danger"></small>
+									</div>
+								</div>
+								<div class="row mb-2">
+									<div class="col-md-6">
+										<label for="Mobileno" class="form-label">Mobile No.</label>
+										<input class="form-control" type="number" placeholder="Enter Mobile No." name="Mobileno" id="Mobileno" readonly />
+										<small asp-validation-for="Mobileno" class="text-danger"></small>
+									</div>
+									<div class="col-md-6">
+										<label for="Email" class="form-label">Email ID</label>
+										<input class="form-control" type="email" placeholder="Enter Email" name="Email" id="Email" readonly />
+										<small asp-validation-for="Email" class="text-danger"></small>
+									</div>
+								</div>
+
+								<div class="row mb-2">
+									<div class="col-md-6">
+										<label for="BillingAddress" class="form-label">Billing Address</label>
+										<textarea class="form-control" placeholder="Enter Billing Address" name="BillingAddress" id="BillingAddress" readonly></textarea>
+										<small asp-validation-for="BillingAddress" class="text-danger"></small>
+									</div>
+									<div class="col-md-6">
+										<label for="ShippingAddress" class="form-label">Shipping Address</label>
+										<textarea class="form-control" placeholder="Enter Shipping Address" name="ShippingAddress" id="ShippingAddress" readonly></textarea>
+										<small asp-validation-for="ShippingAddress" class="text-danger"></small>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="container mt-4">
+							<table class="table table-bordered" id="invoiceTable">
+								<thead class="table-light">
+									<tr>
+										<th>#</th>
+										<th style="min-width: 200px;">ITEM</th>
+										<th>SAC</th>
+										<th>Year</th>
+										<th>PRICE/UNIT</th>
+										<th colspan="2">DISCOUNT</th>
+										<th colspan="2">TAX</th>
+										<th>AMOUNT</th>
+									</tr>
+									<tr>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th>%</th>
+										<th>AMOUNT</th>
+										<th>%</th>
+										<th>AMOUNT</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody id="tableBody">
+									<tr>
+										<td>
+											<button class="btn btn-danger btn-sm removeRow" data-bs-toggle="tooltip" data-bs-placement="top" title="Click delete icon to delete row">🗑</button>
+										</td>
+
+										<td class="position-relative">
+											<input type="text" class="form-control item-search" placeholder="Search Item"
+												   onkeyup="filterItemList(this)" onclick="toggleItemList(this)" autocomplete="off" />
+											<input type="hidden" name="Item" class="item-hidden" />
+
+											<ul class="list-group position-absolute w-100 mt-1 item-list"
+												style="display:none; max-height:200px; overflow-y:auto; z-index:1000;">
+												@foreach (var item in ViewBag.serviceslist)
+												{
+													<li class="list-group-item list-group-item-action"
+														onclick="selectItem(this, '@item.ServicesDesc')">
+														@item.ServicesDesc
+													</li>
+												}
+											</ul>
+										</td>
+
+
+										
+
+										<td><input type="text" class="form-control hsn" value="00440013"></td>
+										<td><input type="number" class="form-control qty"></td>
+										<td><input type="number" class="form-control price" id="Price" name="Price"></td>
+										<td><input type="number" class="form-control discount"></td>
+										<td><input type="number" class="form-control discountAmount" readonly></td>
+										<td>
+											<select class="form-control tax">
+												<option value="0">NONE</option>
+												<option value="18">GST@18%</option>
+												<option value="5">GST@5%</option>
+											</select>
+										</td>
+										<td><input type="number" class="form-control taxAmount" readonly></td>
+										<td><input type="number" class="form-control amount" readonly></td>
+									</tr>
+								</tbody>
+								<tfoot>
+									<tr>
+										<td colspan="10">
+											<button class="btn btn-primary" id="addRowBtn">ADD ROW</button>
+										</td>
+									</tr>
+								</tfoot>
+							</table>
+
+							<div class="mt-3 text-end">
+								<h4><strong>Grand Total: ₹<span id="grandTotal">0.00</span></strong></h4>
+							</div>
+
+							<br />
+							<tr>
+								<td colspan="10">
+									<button class="btn btn-primary" style="margin-left: 510px;text-align: right;" id="addRowBtn" type="submit" onclick="submitFormData()">Save</button>
+								</td>
+							</tr>
+
+						</div>
+						<br />
+					</form>
+				}
+				else
+				{
+					<form method="post" id="invoiceForm">
+						<div class="card mb-4" style="color:red">
+							<div class="card-body">
+
+								@if (ViewBag.LeadCode != null)
+								{
+									<div class="col-md-6">
+										<label for="leadcode" class="form-label">Lead Code</label>
+										<input type="text" id="leadCode" name="leadcode" class="form-control" value="@ViewBag.LeadCode" readonly="true" />
+									</div>
+								}
+
+								<div class="row mb-2">
+									<div class="col-md-6">
+										<label for="CustomerName" class="form-label">Customer Name</label>
+										@*<input class="form-control" type="text" placeholder="Enter Customer Name" name="CompanyName" /> *@
+										<input class="form-control" type="text" placeholder="Enter Customer Name" name="Companyname" id="Companyname" value="@ViewBag.company?.Companyname" />
+										<input type="hidden" id="ID" name="ID" value="@ViewBag.company?.ID" />
+									</div>
+									<div class="col-md-6" id="dvGSTNo">
+										<label for="GSTNo" class="form-label">GST Number</label>  <a href="https://services.gst.gov.in/services/searchtp" target="_blank" class="btn btn-link">(Check GST Number)</a>
+										<input class="form-control" type="text" placeholder="GST Number" name="GSTNo" id="GSTNo" readonly value="@ViewBag.company?.Gstno" />
+										<small asp-validation-for="GSTNo" class="text-danger"></small>
+										<div id="gst-error" style="color: red; display: none;">Please enter a valid GST number.</div>
+									</div>
+								</div>
+								<div class="row mb-2">
+									<div class="col-md-6">
+										<label for="QuotationDate" class="form-label">Quotation Date</label>
+										<input class="form-control" type="date" placeholder="Enter Quotation Date" name="QuotationDate" id="QuotationDate" value="@ViewBag.company?.Quotationdate" />
+										<small asp-validation-for="QuotationDate" class="text-danger"></small>
+									</div>
+									<div class="col-md-6">
+										<label for="Validdate" class="form-label">Valid Till</label>
+										<input class="form-control" type="date" placeholder="Enter Valid Till" name="Validdate" id="Validdate" value="@ViewBag.company?.Validdate" />
+										<small asp-validation-for="Validdate" class="text-danger"></small>
+									</div>
+								</div>
+								<div class="row mb-2">
+									<div class="col-md-6">
+										<label for="Mobileno" class="form-label">Mobile No.</label>
+										<input class="form-control" type="number" placeholder="Enter Mobile No." name="Mobileno" id="Mobileno" readonly value="@ViewBag.company?.Mobileno" />
+										<small asp-validation-for="Mobileno" class="text-danger"></small>
+									</div>
+									<div class="col-md-6">
+										<label for="Email" class="form-label">Email ID</label>
+										<input class="form-control" type="email" placeholder="Enter Email" name="Email" id="Email" value="@ViewBag.company?.Emailid" />
+										<small asp-validation-for="Email" class="text-danger"></small>
+									</div>
+								</div>
+								<div class="row mb-2">
+									<div class="col-md-6">
+										<label for="BillingAddress" class="form-label">Billing Address</label>
+										<textarea class="form-control" placeholder="Enter Billing Address" name="BillingAddress" id="BillingAddress" readonly>@ViewBag.company?.Billingaddress</textarea>
+										<small asp-validation-for="BillingAddress" class="text-danger"></small>
+									</div>
+									<div class="col-md-6">
+										<label for="ShippingAddress" class="form-label">Shipping Address</label>
+										<textarea class="form-control" placeholder="Enter Shipping Address" name="ShippingAddress" id="ShippingAddress" readonly>@ViewBag.company?.Shippingaddress</textarea>
+										<small asp-validation-for="ShippingAddress" class="text-danger"></small>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div class="container mt-4">
+							@{
+								int srNo = 1;
+								decimal grandTotal = 0;
+							}
+							<table class="table table-bordered" id="invoiceTable">
+								<thead class="table-light">
+									<tr>
+										<th>#</th>
+										<th>ITEM</th>
+										<th>HSN/SAC</th>
+										<th>QTY</th>
+										<th>PRICE/UNIT</th>
+										<th colspan="2">DISCOUNT</th>
+										<th colspan="2">TAX</th>
+										<th>AMOUNT</th>
+									</tr>
+									<tr>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th></th>
+										<th>%</th>
+										<th>AMOUNT</th>
+										<th>%</th>
+										<th>AMOUNT</th>
+										<th></th>
+									</tr>
+								</thead>
+								<tbody id="tableBody">
+									@foreach (var item in ViewBag.Items)
+									{
+										grandTotal += item.Amount;
+										<tr data-tax="@item.Tax">
+											<td>
+												<button class="btn btn-danger btn-sm removeRow" data-bs-toggle="tooltip" data-bs-placement="top" title="Click delete icon to delete row">🗑</button>
+											</td>
+											<td>@item.Item</td>
+											<td>@item.Hsn</td>
+											<td>@item.Qty</td>
+											<td>@item.Price</td>
+											<td>@item.Discount</td>
+											<td>@item.DiscountAmount</td>
+											<td>
+												@if (item.Tax == 18)
+												{
+													@:GST@18%
+												}
+												else if (item.Tax == 5)
+												{
+													@:GST@5%
+												}
+												else
+												{
+													@:None
+												}
+
+
+
+											</td>
+											<td>@item.TaxAmount</td>
+											<td>@item.Amount</td>
+										</tr>
+										srNo++;
+									}
+
+								</tbody>
+								<tfoot>
+									<tr>
+										<td colspan="10">
+											<button class="btn btn-primary" id="addRowBtn" onclick="checkandAdd()">ADD ROW</button>
+										</td>
+									</tr>
+								</tfoot>
+							</table>
+
+							<div class="mt-3 text-end">
+								<h4><strong>Grand Total: ₹<span id="grandTotal">@grandTotal</span></strong></h4>
+
+							</div>
+
+							<div class="mt-3 text-end" style="display:none">
+								<h4><strong>Grand Total: ₹<span id="oldgrandtotal">@grandTotal</span></strong></h4>
+							</div>
+
+							<br />
+							<tr>
+								<td colspan="10">
+									<button class="btn btn-primary" style="margin-left: 510px;text-align: right;" id="addRowBtn" type="submit" onclick="UpdateFormData()" name="Update">Update</button>
+								</td>
+							</tr>
+
+						</div>
+						<br />
+					</form>
+				}
+			</div>
+		</div>
+	</div>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+	<script>
+		var servicesArray = [];
+
+		@foreach (var item in ViewBag.serviceslist)
+		{
+			@:servicesArray.push("@item.ServicesDesc");
+		}
+	</script>
+
+
+	<script>
+		$(document).ready(function () {
+
+			 function calculateGrandTotal() {
+				debugger
+
+				// var oldGrandTotal = document.getElementById("oldgrandtotal").value;
+				 // var oldGrandTotal = parseFloat(document.getElementById("oldgrandtotal").value);
+				let oldGrandTotal = "";
+				//let oldGrandTotalElement = document.getElementById("oldgrandtotal");
+
+				 let oldGrandTotalElement = parseFloat($("#oldgrandtotal").text());
+			   if (isNaN(oldGrandTotalElement) || oldGrandTotalElement === null) {
+					oldGrandTotal = 0;
+				} else {
+					oldGrandTotal = oldGrandTotalElement;
+				}
+
+				let grandTotal = oldGrandTotal;
+				$(".amount").each(function () {
+					let amount = parseFloat($(this).val()) || 0;
+					grandTotal += amount;
+				});
+				$("#grandTotal").text(grandTotal.toFixed(2));
+			}
+
+			$(document).on("blur", ".qty, .price, .discount, .tax", function () {
+				let row = $(this).closest("tr");
+
+				let qty = parseFloat(row.find(".qty").val()) || 0;
+				let price = parseFloat(row.find(".price").val()) || 0;
+				let discountPercent = parseFloat(row.find(".discount").val()) || 0;
+				let taxPercent = parseFloat(row.find(".tax").val()) || 0;
+
+				// Calculate total price
+				let totalPrice = qty * price;
+
+				// Calculate discount
+				let discountAmount = (totalPrice * discountPercent) / 100;
+				row.find(".discountAmount").val(discountAmount.toFixed(2));
+
+				// Calculate tax
+				let taxAmount = ((totalPrice - discountAmount) * taxPercent) / 100;
+				row.find(".taxAmount").val(taxAmount.toFixed(2));
+
+				// Calculate final amount
+				let finalAmount = totalPrice - discountAmount + taxAmount;
+				row.find(".amount").val(finalAmount.toFixed(2));
+
+				// Update Grand Total
+				calculateGrandTotal();
+			});
+
+
+
+		var servicesOptions = '';
+		@foreach (var item in ViewBag.serviceslist)
+		{
+			@:servicesOptions += `<option value="@item.ServicesDesc">@item.ServicesDesc</option>`;
+		}
+
+
+						$("#addRowBtn").click(function (event) {
+			event.preventDefault();
+
+			var servicesOptionsList = "";
+			servicesArray.forEach(function (service) {
+				servicesOptionsList += `<li class="list-group-item list-group-item-action" onclick="selectItem(this, '${service}')">${service}</li>`;
+			});
+
+			var newRow = `<tr>
+				<td>
+					<button class="btn btn-danger btn-sm removeRow" data-bs-toggle="tooltip" data-bs-placement="top" title="Delete Row">🗑</button>
+				</td>
+
+				<td class="position-relative" style="min-width: 200px;">
+					<input type="text" class="form-control item-search" placeholder="Search Item"
+						onkeyup="filterItemList(this)" onclick="toggleItemList(this)" autocomplete="off" />
+					<input type="hidden" name="Item" class="item-hidden" />
+					<ul class="list-group position-absolute w-100 mt-1 item-list"
+						style="display:none; max-height:200px; overflow-y:auto; z-index:1000;">
+						${servicesOptionsList}
+					</ul>
+				</td>
+
+				<td><input type="text" class="form-control hsn" value="00440013"></td>
+				<td><input type="number" class="form-control qty"></td>
+				<td><input type="number" class="form-control price"></td>
+				<td><input type="number" class="form-control discount"></td>
+				<td><input type="number" class="form-control discountAmount"></td>
+				<td>
+					<select class="form-control tax">
+						<option value="0">NONE</option>
+						<option value="18">GST@18%</option>
+						<option value="5">GST@5%</option>
+					</select>
+				</td>
+				<td><input type="number" class="form-control taxAmount"></td>
+				<td><input type="number" class="form-control amount"></td>
+			</tr>`;
+
+			$("#tableBody").append(newRow);
+		});
+
+
+
+
+			$(document).on("click", ".removeRow", function () {
+				// $(this).closest("tr").remove();
+				// calculateGrandTotal();
+								var $row = $(this).closest("tr");
+					   var cells = $row.children();
+
+		//var price = parseFloat($(cells[9]).text().trim());
+		  var price = parseFloat($(cells[9]).find('input').val().trim());
+
+		$row.remove();
+				 let oldGrandTotalElement = parseFloat($("#grandTotal").text());
+		let oldGrandTotal = "";
+
+			   if (isNaN(oldGrandTotalElement) || oldGrandTotalElement === null) {
+					oldGrandTotal = 0;
+				} else {
+					oldGrandTotal = oldGrandTotalElement;
+				}
+
+				let grandTotal = oldGrandTotal;
+					grandTotal -= price;
+				$("#grandTotal").text(grandTotal.toFixed(2));
+
+
+			});
+
+
+			$("#saveDataBtn").click(function (event) {
+				event.preventDefault();
+
+				var tableData = [];
+				$("#tableBody tr").each(function () {
+					var row = {
+						Item: $(this).find(".item").val(),
+						HSN: $(this).find(".hsn").val(),
+						Qty: $(this).find(".qty").val(),
+						Price: $(this).find(".price").val(),
+						Discount: $(this).find(".discount").val(),
+						DiscountAmount: $(this).find(".discountAmount").val(),
+						Tax: $(this).find(".tax").val(),
+						TaxAmount: $(this).find(".taxAmount").val(),
+						Amount: $(this).find(".amount").val(),
+					};
+					tableData.push(row);
+				});
+
+				$.ajax({
+					url: "/Quotation/SaveTempData",
+					type: "POST",
+					contentType: "application/json",
+					data: JSON.stringify(tableData),
+					success: function (response) {
+						alert(response.message);
+					},
+					error: function (error) {
+						console.error("Error saving data:", error);
+					}
+				});
+			});
+		});
+
+	</script>
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+	<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+	<script>
+		$(document).ready(function () {
+
+			checkissubmit();
+
+			// $('#CompanyName').select2({
+			//     placeholder: 'Select Company Name',
+			//     allowClear: true
+			// });
+
+		   $('#Item').select2({
+			placeholder: 'Select Package',
+			allowClear: true
+		});
+
+			})  ;
+
+
+
+	</script>
+
+	<script>
+
+				function checkissubmit() {
+					debugger;
+			   var companyName = @Html.Raw(Json.Serialize(ViewBag.CompnayName ?? ""));
+			   var company = "";
+			   if(companyName !=""){
+				   company = document.getElementById("CompName").value;
+			   }else{
+					company = document.getElementById("CompanyName").value;
+			   }
+			   console.log("Company: ", company);
+			   if(company != ""){
+			// Make the AJAX request
+		$.ajax({
+			url: '@Url.Action("checkcompanyandGst", "Quotation")', // Action method URL
+			type: 'POST',
+			data: {
+				companyName: company
+			},
+			success: function (response) {
+				debugger
+				if (response) {
+
+					$('#GSTNo').val(response.gstno);
+					$('#BillingAddress').val(response.billingaddress);
+					$('#Email').val(response.emailid);
+					$('#ShippingAddress').val(response.shippingaddress);
+					$('#Mobileno').val(response.mobileno);
+
+					console.log("AJAX call success:", response);
+				}
+			},
+			error: function (xhr, status, error) {
+
+				alert("An error occurred: " + error);
+			}
+		});
+			   }
+		   }
+
+
+	</script>
+
+	<script>
+		// Get the current date
+		const currentDate = new Date().toISOString().split('T')[0];
+
+		// Set the current date as the default value for the input field
+		document.getElementById('QuotationDate').value = currentDate;
+	</script>
+	<script>
+
+		function collectFormData() {
+			debugger;
+			let tableData = [];
+			$("#invoiceTable tbody tr").each(function () {
+				let row = {
+					item: $(this).find(".item-select").val(),
+					hsn: $(this).find(".hsn").val(),
+					qty: $(this).find(".qty").val(),
+					price: $(this).find(".price").val(),
+					discount: $(this).find(".discount").val(),
+					discountAmount: $(this).find(".discountAmount").val(),
+					tax: $(this).find(".tax").val(),
+					taxAmount: $(this).find(".taxAmount").val(),
+					amount: $(this).find(".amount").val()
+				};
+				tableData.push(row);
+			});
+
+
+			let formData = {
+				companyName: $("#CompanyName").val(),
+				gstNo: $("#GSTNo").val(),
+				quotationDate: $("#QuotationDate").val(),
+				Validdate: $("#Validdate").val(),
+				mobileno: $("#Mobileno").val(),
+				email: $("#Email").val(),
+				billingAddress: $("#BillingAddress").val(),
+				shippingAddress: $("#ShippingAddress").val(),
+				LeadCode : $("#leadCode").val() || '',
+				items: tableData
+
+			};
+
+			return formData;
+		}
+
+		function submitFormData() {
+			debugger;
+			let formData = collectFormData();
+
+			$.ajax({
+				url: '/Quotation/SubmitDeatils',
+				type: 'POST',
+				data: JSON.stringify(formData),
+				contentType: 'application/json',
+				success: function (response) {
+					alert('Saved successfully!');
+					window.location.href = '/Alert/Index';
+
+				},
+				error: function (error) {
+					console.error("Error:", error);
+					alert('There was an error submitting the form.');
+				}
+			});
+		}
+	</script>
+	<script>
+
+		function collectUpdatedformData() {
+			debugger;
+			let tableData = [];
+
+			$("#invoiceTable tbody tr").each(function () {
+				let row = {
+					item: $(this).find(".item-select").val() || $(this).find("td:nth-child(2)").text() || '',
+					hsn: $(this).find(".hsn").val() || $(this).find("td:nth-child(3)").text() || '',
+					qty: $(this).find(".qty").val() || $(this).find("td:nth-child(4)").text() || 0,
+					price: $(this).find(".price").val() || $(this).find("td:nth-child(5)").text() || 0,
+					discount: $(this).find(".discount").val() || $(this).find("td:nth-child(6)").text() || 0,
+					discountAmount: $(this).find(".discountAmount").val() || $(this).find("td:nth-child(7)").text() || 0,
+					// tax: $(this).find(".tax").val() || $(this).find("td:nth-child(8)").text().trim() || 0,
+					tax: $(this).find(".tax").val() || $(this).find("td:nth-child(8)").text().trim().replace(/[^\d]/g, '') || 0,
+					// tax: "18",
+					taxAmount: $(this).find(".taxAmount").val() || $(this).find("td:nth-child(9)").text() || 0,
+					amount: $(this).find(".amount").val() || $(this).find("td:nth-child(10)").text() || 0
+				};
+
+				console.log("Row data collected:", row);
+				tableData.push(row);
+			});
+
+			let formData = {
+				ID: $("#ID").val() || '',
+				companyName: $("#Companyname").val() || '',
+				gstNo: $("#GSTNo").val() || '',
+				quotationDate: $("#QuotationDate").val() || '',
+				validDate: $("#Validdate").val() || '',
+				mobileno: $("#Mobileno").val() || '',
+				email: $("#Email").val() || '',
+				billingAddress: $("#BillingAddress").val() || '',
+				shippingAddress: $("#ShippingAddress").val() || '',
+				LeadCode : $("#leadCode").val() || '',
+				items: tableData
+			};
+
+
+			console.log("Complete Form Data:", formData);
+
+			return formData;
+		}
+
+		function UpdateFormData() {
+			debugger;
+			let formData = collectUpdatedformData();
+
+			$.ajax({
+				url: '/Quotation/UpdateDeatils',
+				type: 'POST',
+				data: JSON.stringify(formData),
+				contentType: 'application/json',
+				success: function (response) {
+					alert('Saved successfully!');
+					window.location.href = '/Alert/Index';
+
+				},
+				error: function (error) {
+					console.error("Error:", error);
+					alert('There was an error submitting the form.');
+				}
+			});
+		}
+	</script>
+
+	<script>
+		function GetDetailsbygst() {
+
+			var Department = document.getElementById("DepartmentName").value;
+
+			console.log("Department: ", Department);
+			$.ajax({
+				url: '@Url.Action("GetbyDepartment", "Quotation")',
+				type: 'POST',
+				data: { Department: Department },
+				success: function (response) {
+				   $('#ServicesDesc').empty();
+				$('#ServicesDesc').append('<option value="" selected>Select Service</option>');
+				$.each(response.results, function (index, service) {
+					console.log("Service object:", service);
+
+					if (service.servicesDesc) {
+						$('#ServicesDesc').append('<option value="' + service.servicesDesc + '">' + service.servicesDesc + '</option>');
+
+					}
+				});
+			},
+
+			error: function (xhr, status, error) {
+				console.log("Error occurred:", error);
+				alert("An error occurred: " + error);
+			}
+		});
+
+		}
+
+	</script>
+
+	<script>
+		function Getpricebyservices() {
+
+		}
+	</script>
+
+	@*     //Validity date *@
+	<script>
+		function setValidTillDate() {
+			let quotationInput = document.getElementById("QuotationDate");
+			let validInput = document.getElementById("Validdate");
+
+			if (quotationInput && validInput && quotationInput.value) {
+				let quotationDate = new Date(quotationInput.value);
+				if (!isNaN(quotationDate.getTime())) {
+					quotationDate.setDate(quotationDate.getDate() + 30);
+					let year = quotationDate.getFullYear();
+					let month = String(quotationDate.getMonth() + 1).padStart(2, '0');
+					let day = String(quotationDate.getDate()).padStart(2, '0');
+					validInput.value = `${year}-${month}-${day}`;
+				}
+			}
+		}
+
+		document.addEventListener("DOMContentLoaded", function () {
+			setValidTillDate();
+
+			document.getElementById("QuotationDate").addEventListener("change", function () {
+				setValidTillDate();
+			});
+		});
+	</script>
+
+	<script>
+		 function handleServiceChange(selectElement)
+		{
+			var selectedService = $(selectElement).val();
+			var currentRow = $(selectElement).closest("tr");
+			if (selectedService)
+			{
+				GetServiceDetails(selectedService, currentRow);
+			}
+		}
+
+	</script>
+
+
+	<script>
+			 function GetServiceDetails(serviceName, rowElement)
+			 {
+			debugger;
+			$.ajax({
+				url: '@Url.Action("Getpricebyservice", "Quotation")',
+				type: 'POST',
+				data: { service: serviceName },
+				success: function (response) {
+					debugger;
+				if (response && response.results) {
+					var priceHtml = '';
+					response.results.forEach(function (item) {
+							debugger;
+
+						console.log(item.price);
+
+					   $(rowElement).find(".price").val(item.price);
+
+					});
+					$('#resultsContainer').html(priceHtml);
+				}
+
+				},
+				error: function (xhr, status, error) {
+					console.log("Error occurred:", error);
+					alert("An error occurred: " + error);
+				}
+			});
+		}
+
+	</script>
+	@* 
+//validations *@
+	<script>
+		document.getElementById("invoiceForm").addEventListener("submit", function (event) {
+			if (!checkValidation()) {
+				event.preventDefault();
+			}
+		});
+
+		function checkValidation() {
+			var company = document.getElementById("CompanyName");
+			var gstNo = document.getElementById("GSTNo");
+			var billingAddress = document.getElementById("BillingAddress");
+			var shippingAddress = document.getElementById("ShippingAddress");
+
+
+			const fields = [
+				{ field: company, message: "Company Name cannot be empty." },
+				{
+					field: gstNo,
+					validate: function (value) {
+						if (value.trim() === "") return "GST Number cannot be empty.";
+						if (!/^[0-9]{2}[A-Z]{5}[0-9]{4}[A-Z]{1}[1-9A-Z]{1}Z[0-9A-Z]{1}$/.test(value.trim())) {
+							return "GST Number is not in a valid format.";
+						}
+						return "";
+					}
+				},
+				{ field: billingAddress, message: "Billing Address cannot be empty." },
+				{ field: shippingAddress, message: "Shipping Address cannot be empty." },
+			];
+
+			// Reset previous error messages/styles
+			resetErrorStyles(fields.map(f => f.field));
+
+			for (let item of fields) {
+				const value = item.field.value.trim();
+				let errorMessage = "";
+
+				if (item.validate) {
+					errorMessage = item.validate(value);
+				} else if (!value) {
+					errorMessage = item.message;
+				}
+
+				if (errorMessage) {
+					displayErrorMessage(item.field, errorMessage);
+					item.field.classList.add("is-invalid");
+					item.field.focus();
+					return false; // Stop at the first error
+				}
+			}
+			return true;
+		}
+
+		function displayErrorMessage(element, errorMessage) {
+
+			var errorSpan = document.createElement("span");
+			errorSpan.className = "error-message text-danger";
+			errorSpan.textContent = errorMessage;
+
+
+			var parentDiv = element.parentNode;
+
+
+			if (parentDiv) {
+				parentDiv.appendChild(errorSpan);
+			} else {
+				element.parentNode.appendChild(errorSpan);
+			}
+		}
+
+
+		function resetErrorStyles(elements) {
+			elements.forEach(element => {
+				element.classList.remove("is-invalid");
+
+				var errorSpan = element.parentNode.querySelector(".error-message");
+				if (errorSpan) {
+					errorSpan.remove();
+				}
+			});
+		}
+	</script>
+
+	@* NEW CODE START FOR DDL *@
+	<script>
+		function toggleCompanyList() {
+			document.getElementById("companyList").style.display = "block";
+		}
+
+		function filterCompanyList() {
+			const input = document.getElementById("companySearch").value.toLowerCase();
+			const items = document.querySelectorAll("#companyList li");
+
+			let hasMatch = false;
+			items.forEach(item => {
+				if (item.textContent.toLowerCase().includes(input)) {
+					item.style.display = "";
+					hasMatch = true;
+				} else {
+					item.style.display = "none";
+				}
+			});
+
+			document.getElementById("companyList").style.display = hasMatch ? "block" : "none";
+		}
+
+		function selectCompany(name) {
+			document.getElementById("companySearch").value = name;
+			document.getElementById("CompanyNameHidden").value = name;
+			document.getElementById("companyList").style.display = "none";
+
+			checkissubmitt(); // Call your AJAX method
+		}
+
+		// Close dropdown on outside click
+		document.addEventListener("click", function (event) {
+			const searchBox = document.getElementById("companySearch");
+			const dropdown = document.getElementById("companyList");
+			if (!searchBox.contains(event.target) && !dropdown.contains(event.target)) {
+				dropdown.style.display = "none";
+			}
+		});
+
+		function checkissubmitt() {
+			var company = document.getElementById("CompanyNameHidden").value;
+			console.log("Company selected: ", company);
+
+			$.ajax({
+				url: '@Url.Action("checkcompanyandGst", "Quotation")',
+				type: 'POST',
+				data: {
+					companyName: company
+				},
+				success: function (response) {
+					if (response) {
+						$('#GSTNo').val(response.gstno);
+						$('#BillingAddress').val(response.billingaddress);
+						$('#Email').val(response.emailid);
+						$('#ShippingAddress').val(response.shippingaddress);
+						$('#Mobileno').val(response.mobileno);
+						console.log("Data loaded: ", response);
+					}
+				},
+				error: function (xhr, status, error) {
+					alert("Error: " + error);
+				}
+			});
+		}
+	</script>
+
+	<script>
+				function toggleItemList(input) {
+			const list = input.parentElement.querySelector('.item-list');
+			list.style.display = 'block';
+		}
+
+		function filterItemList(input) {
+			const filter = input.value.toLowerCase();
+			const list = input.parentElement.querySelector('.item-list');
+			const items = list.getElementsByTagName("li");
+
+			let hasMatch = false;
+			for (let i = 0; i < items.length; i++) {
+				const txtValue = items[i].textContent || items[i].innerText;
+				if (txtValue.toLowerCase().includes(filter)) {
+					items[i].style.display = "";
+					hasMatch = true;
+				} else {
+					items[i].style.display = "none";
+				}
+			}
+
+			list.style.display = hasMatch ? "block" : "none";
+		}
+
+		function selectItem(li, value) {
+
+			debugger;
+
+
+			const container = li.closest('td');
+			container.querySelector('.item-search').value = value;
+			container.querySelector('.item-hidden').value = value;
+			container.querySelector('.item-list').style.display = 'none';
+
+			handleServiceChange(container.querySelector('.item-search'));
+		}
+
+
+		// Hide dropdown on click outside
+		document.addEventListener("click", function (event) {
+
+			debugger;
+
+			document.querySelectorAll('.item-list').forEach(function (list) {
+				if (!list.parentElement.contains(event.target)) {
+					list.style.display = 'none';
+				}
+			});
+		});
+
+	</script>
+
+
+
+	@* NEW CODE END FOR DDL *@
+
+
+
+</div>
+
+
+
+
