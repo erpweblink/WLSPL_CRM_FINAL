@@ -51,7 +51,7 @@ namespace WLSPL_CRM_2.Controllers
             var topUser = users.FirstOrDefault(u => u.Role == "Admin");
 
             // Return view with hierarchy
-            return View("OrgChart", topUser);
+            return View("Index", topUser);
         }
 
         public async Task<IActionResult> Showprofile()
@@ -64,8 +64,6 @@ namespace WLSPL_CRM_2.Controllers
             }
             return View(obj);
         }
-
-
 
     }
 }

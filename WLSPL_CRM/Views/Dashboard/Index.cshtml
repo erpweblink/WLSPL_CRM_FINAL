@@ -9,12 +9,12 @@
 
 <style>
     /* Reset and base styles */
-    * {
-        box-sizing: border-box;
+    * { 
+        box-sizing: border-box; 
         margin: 0;
         padding: 0;
     }
-
+    
     body {
         font-family: Arial, sans-serif;
         background-color: #f0f0f0;
@@ -35,12 +35,12 @@
     }
 
     .level {
-        display: flex;
+        display: flex; 
         justify-content: center;
         position: relative;
         width: 100%;
-        margin: 17px 0;
-        gap: 13px;
+         margin: 17px 0; 
+         gap: 13px;
     }
 
     /* Base node styling */
@@ -61,58 +61,58 @@
         min-width: 120px;
     }
 
-        .node:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
-        }
+    .node:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
 
-        /* Role-based node styles */
-        .node[data-role="admin"] {
-            border-color: #FF5722;
-            border-color: #FF5722;
-            width: 161px;
-            height: 110px;
-        }
+    /* Role-based node styles */
+    .node[data-role="admin"] { 
+        border-color: #FF5722;
+        border-color: #FF5722;
+        width: 161px;
+        height: 110px;
+    }
 
-        .node[data-role="sub-admin"] {
-            border-color: #2196F3;
-            width: 161px;
-            height: 100px;
-        }
+    .node[data-role="sub-admin"] { 
+        border-color: #2196F3;
+    width: 161px;
+    height: 100px;
+    }
 
-        .node[data-role="department"] {
-            border-color: #9C27B0;
-            width: 160px;
-            height: 90px;
-        }
+    .node[data-role="department"] { 
+        border-color: #9C27B0;
+        width: 160px;
+        height: 90px;
+    }
 
-        .node[data-role="manager"] {
-            border-color: #FFC107;
-            width: 150px;
-            height: 85px;
-        }
+    .node[data-role="manager"] { 
+        border-color: #FFC107;
+        width: 150px;
+        height: 85px;
+    }
 
-        .node[data-role="team-lead"] {
-            border-color: #009688;
-            width: 140px;
-            height: 80px;
-        }
+    .node[data-role="team-lead"] {
+        border-color: #009688;
+        width: 140px;
+        height: 80px;
+    }
 
-        .node[data-role="executive"] {
-            border-color: #4CAF50;
-            width: 130px;
-            height: 75px;
-        }
+    .node[data-role="executive"] {
+        border-color: #4CAF50;
+        width: 130px;
+        height: 75px;
+    }
 
     /* Department wrapper */
-    .department-wrapper {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        position: relative;
-        margin: 0 5px; /* Minimal 5px on each side = 10px total between cards */
-        min-width: auto;
-    }
+  .department-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    margin: 0 5px;   /* Minimal 5px on each side = 10px total between cards */
+    min-width: auto;
+}
 
     /* Department horizontal line - FIXED */
     .dept-horizontal-line {
@@ -244,15 +244,15 @@
         box-shadow: 0 4px 15px rgba(0,0,0,0.3);
     }
 
-        .debug-info h4 {
-            margin-bottom: 10px;
-            color: #fff;
-        }
+    .debug-info h4 {
+        margin-bottom: 10px;
+        color: #fff;
+    }
 
-        .debug-info h5 {
-            margin: 10px 0 5px;
-            color: #ffc107;
-        }
+    .debug-info h5 {
+        margin: 10px 0 5px;
+        color: #ffc107;
+    }
 
     /* Text styling */
     .node strong {
@@ -377,7 +377,7 @@
                                         <div><strong>{exec.FirstName} {exec.LastName}</strong></div>
                                         <small>{exec.Role}</small>
                                     </div>
-
+                                    
                                 ");
                             }
                         }
@@ -393,15 +393,15 @@
                 {
                     html.AppendHtml("<div class='tl-column'><div class='node' data-role='team-lead'><div><small>No team leads</small></div></div></div>");
                     foreach (var exec in manager.Children)
-                    {
-                        html.AppendHtml($@"
+                            {
+                                html.AppendHtml($@"
                                     <div class='node' data-role='executive'>
                                         <div><strong>{exec.FirstName} {exec.LastName}</strong></div>
                                         <small>{exec.Role}</small>
                                     </div>
-
+                                    
                                 ");
-                    }
+                            }
                 }
 
                 html.AppendHtml("</div></div></div>"); // Close tl-row, container, manager-block
@@ -416,12 +416,12 @@
     }
 }
 
-@* <!-- Debug info panel -->
-<div class="debug-info" id="debugInfo">
+<!-- Debug info panel -->
+@* <div class="debug-info" id="debugInfo">
     <h4>Debug Information</h4>
     <div id="debugContent"></div>
-</div>
- *@
+</div> *@
+
 <div class="tree">
     <!-- Level 1: Admin -->
     <div class="level">
@@ -446,193 +446,193 @@
 
         <!-- Level 3: Departments -->
         @RenderDepartments(subAdmin.Children.Where(c =>
-                c.Role.Contains("Manager") ||
-                c.Role.Contains("Department") ||
-                c.Role.Contains("Director") ||
-                c.Role.Contains("Head")).ToList())
+            c.Role.Contains("Manager") || 
+            c.Role.Contains("Department") || 
+            c.Role.Contains("Director") || 
+            c.Role.Contains("Head")).ToList())
     }
 </div>
 
 <script>
-    // Debug function to log data structure
-    function debugDataStructure() {
-        const debugInfo = document.getElementById('debugInfo');
-        const debugContent = document.getElementById('debugContent');
-
-        if (debugInfo && debugContent) {
-            let html = '<h5>Departments:</h5>';
-            const departments = document.querySelectorAll('[data-role="department"]');
-
-            departments.forEach(dept => {
-                const deptId = dept.getAttribute('data-dept-id');
-                html += <p>Dept ID: ${deptId} - ${dept.textContent.trim()}</p>;
-
-                // Check managers
-                const managers = document.querySelectorAll(.manager-container[data-dept-id="${deptId}"] [data-role="manager"]);
-                html += <p>&nbsp;&nbsp;Managers: ${managers.length}</p>;
-                managers.forEach(mgr => {
-                    html += <p>&nbsp;&nbsp;&nbsp;&nbsp;${mgr.textContent.trim()}</p>;
-                });
-
-                const container = document.querySelector(.tl-horizontal-container[data-dept-id="${deptId}"]);
-                if (container) {
-                    const teamLeads = container.querySelectorAll('[data-role="team-lead"]');
-                    html += <p>&nbsp;&nbsp;Team Leads: ${teamLeads.length}</p>;
-
-                    teamLeads.forEach(tl => {
-                        const tlId = tl.getAttribute('data-tl-id');
-                        html += <p>&nbsp;&nbsp;&nbsp;&nbsp;TL ID: ${tlId} - ${tl.textContent.trim()}</p>;
-
-                        const execs = document.querySelectorAll(.executive-container[data-tl-id="${tlId}"] [data-role="executive"]);
-                        html += <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Executives: ${execs.length}</p>;
-
-                        execs.forEach(exec => {
-                            html += <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${exec.textContent.trim()}</p>;
-                        });
-                    });
-                }
-            });
-
-            debugContent.innerHTML = html;
-        }
-    }
-
-    // Toggle department (show/hide managers) - FIXED
-    function toggleDepartment(deptNode) {
-        debugger;
-        const userRole = '@Context.Session.GetString("Department")'.trim().toUpperCase(); // Normalize role
-        const clickedDept = deptNode.textContent.trim().toUpperCase(); // Normalize dept name
-
-        const isAdmin = userRole === "ADMIN" || userRole === "ALL" || userRole === "HR";
-
-        // If the user is allowed to see all or if they clicked their own department
-        if (isAdmin || userRole === clickedDept) {
-            const deptId = deptNode.getAttribute('data-dept-id');
-            const wrapper = deptNode.closest('.department-wrapper');
-            const managerContainer = wrapper.querySelector(.manager-container[data-dept-id="${deptId}"]);
-            const managerConnector = wrapper.querySelector(.manager-connector[data-dept-id="${deptId}"]);
-            const deptHorizontalLine = wrapper.querySelector(.dept-horizontal-line[data-dept-id="${deptId}"]);
-
-            const isVisible = managerContainer?.style.display === 'flex';
-            const show = !isVisible;
-
-            // Show/hide managers
-            if (managerContainer) {
-                managerContainer.style.display = show ? 'flex' : 'none';
-            }
-
-            if (managerConnector) {
-                managerConnector.style.display = show ? 'block' : 'none';
-            }
-
-            // Show/hide department horizontal line
-            if (deptHorizontalLine) {
-                deptHorizontalLine.style.display = show ? 'block' : 'none';
-            }
-
-            // Hide team leads and executives when collapsing department
-            if (!show) {
-                wrapper.querySelectorAll('.tl-horizontal-container').forEach(tlContainer => {
-                    tlContainer.style.display = 'none';
-                });
-
-                wrapper.querySelectorAll('.manager-vertical-connector').forEach(connector => {
-                    connector.style.display = 'none';
-                });
-
-                wrapper.querySelectorAll('.executive-container').forEach(el => el.style.display = 'none');
-                wrapper.querySelectorAll('.tl-vertical-connector').forEach(el => el.style.display = 'none');
-            }
-        } else {
-            alert("You are not authorized to view other departments.");
-        }
-    }
-
-
-    // Toggle team leads for a manager
-    function toggleTeamLeads(managerNode) {
-        const managerId = managerNode.getAttribute('data-manager-id');
-        const container = managerNode.closest('.manager-block');
-
-        const tlContainer = container.querySelector(.tl-horizontal-container[data-manager-id="${managerId}"]);
-        const connector = container.querySelector(.manager-vertical-connector[data-manager-id="${managerId}"]);
-
-        const isVisible = tlContainer?.style.display === 'flex';
-        if (tlContainer) tlContainer.style.display = isVisible ? 'none' : 'flex';
-        if (connector) connector.style.display = isVisible ? 'none' : 'block';
-
-        // Hide execs and vertical connectors
-        container.querySelectorAll('.executive-container').forEach(e => e.style.display = 'none');
-        container.querySelectorAll('.tl-vertical-connector').forEach(e => e.style.display = 'none');
-    }
-
-    // Toggle executives for a team lead
-    function toggleExecutives(teamLeadNode) {
-        const tlId = teamLeadNode.getAttribute('data-tl-id');
-        const column = teamLeadNode.closest('.tl-column');
-
-        // Find executive container and connector for this team lead
-        const executiveContainer = column.querySelector(.executive-container[data-tl-id="${tlId}"]);
-        const verticalConnector = column.querySelector(.tl-vertical-connector[data-tl-id="${tlId}"]);
-
-        if (executiveContainer) {
-            const isVisible = executiveContainer.style.display === 'flex';
-            executiveContainer.style.display = isVisible ? 'none' : 'flex';
-            verticalConnector.style.display = isVisible ? 'none' : 'block';
-        }
-
-        // Show all executive connectors in this container
-        if (executiveContainer && executiveContainer.style.display === 'flex') {
-            executiveContainer.querySelectorAll('.executive-connector').forEach(connector => {
-                connector.style.display = 'block';
-            });
-        }
-    }
-
-    // Initialize on document ready - UPDATED
-    document.addEventListener('DOMContentLoaded', function() {
-        // Run debug function to log structure
-        debugDataStructure();
-
-        // Adjust horizontal line width based on number of managers for departments
-        const departments = document.querySelectorAll('.department-wrapper');
+// Debug function to log data structure
+function debugDataStructure() {
+    const debugInfo = document.getElementById('debugInfo');
+    const debugContent = document.getElementById('debugContent');
+    
+    if (debugInfo && debugContent) {
+        let html = '<h5>Departments:</h5>';
+        const departments = document.querySelectorAll('[data-role="department"]');
+        
         departments.forEach(dept => {
-            const deptId = dept.querySelector('[data-role="department"]').getAttribute('data-dept-id');
-            const managers = dept.querySelectorAll(.manager-container[data-dept-id="${deptId}"] .manager-block);
-
-            if (managers.length > 0) {
-                const deptLine = dept.querySelector(.dept-horizontal-line[data-dept-id="${deptId}"]);
-                if (deptLine) {
-                    const width = Math.max(140, (managers.length * 160) + ((managers.length - 1) * 34));
-                    deptLine.style.width = width + 'px';
-                }
+            const deptId = dept.getAttribute('data-dept-id');
+            html += `<p>Dept ID: ${deptId} - ${dept.textContent.trim()}</p>`;
+            
+            // Check managers
+            const managers = document.querySelectorAll(`.manager-container[data-dept-id="${deptId}"] [data-role="manager"]`);
+            html += `<p>&nbsp;&nbsp;Managers: ${managers.length}</p>`;
+            managers.forEach(mgr => {
+                html += `<p>&nbsp;&nbsp;&nbsp;&nbsp;${mgr.textContent.trim()}</p>`;
+            });
+            
+            const container = document.querySelector(`.tl-horizontal-container[data-dept-id="${deptId}"]`);
+            if (container) {
+                const teamLeads = container.querySelectorAll('[data-role="team-lead"]');
+                html += `<p>&nbsp;&nbsp;Team Leads: ${teamLeads.length}</p>`;
+                
+                teamLeads.forEach(tl => {
+                    const tlId = tl.getAttribute('data-tl-id');
+                    html += `<p>&nbsp;&nbsp;&nbsp;&nbsp;TL ID: ${tlId} - ${tl.textContent.trim()}</p>`;
+                    
+                    const execs = document.querySelectorAll(`.executive-container[data-tl-id="${tlId}"] [data-role="executive"]`);
+                    html += `<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Executives: ${execs.length}</p>`;
+                    
+                    execs.forEach(exec => {
+                        html += `<p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;${exec.textContent.trim()}</p>`;
+                    });
+                });
             }
+        });
+        
+        debugContent.innerHTML = html;
+    }
+}
 
-            // Adjust team lead horizontal lines
-            const tlContainers = dept.querySelectorAll('.tl-horizontal-container');
-            tlContainers.forEach(tlContainer => {
-                const tlRow = tlContainer.querySelector('.tl-row');
-                if (tlRow) {
-                    const tlColumns = tlRow.querySelectorAll('.tl-column');
-                    if (tlColumns.length > 0) {
-                        const hlLine = tlContainer.querySelector('.tl-horizontal-line');
-                        if (hlLine) {
-                            const width = Math.max(70, (tlColumns.length * 160) + ((tlColumns.length - 1) * 15));
-                            hlLine.style.width = width + 'px';
-                        }
+// Toggle department (show/hide managers) - FIXED
+function toggleDepartment(deptNode) {
+    debugger;
+    const userRole = '@Context.Session.GetString("Department")'.trim().toUpperCase(); // Normalize role
+    const clickedDept = deptNode.textContent.trim().toUpperCase(); // Normalize dept name
+
+    const isAdmin = userRole === "ADMIN" || userRole === "ALL" || userRole === "HR";
+    
+    // If the user is allowed to see all or if they clicked their own department
+    if (isAdmin || userRole === clickedDept) {
+        const deptId = deptNode.getAttribute('data-dept-id');
+        const wrapper = deptNode.closest('.department-wrapper');
+        const managerContainer = wrapper.querySelector(`.manager-container[data-dept-id="${deptId}"]`);
+        const managerConnector = wrapper.querySelector(`.manager-connector[data-dept-id="${deptId}"]`);
+        const deptHorizontalLine = wrapper.querySelector(`.dept-horizontal-line[data-dept-id="${deptId}"]`);
+
+        const isVisible = managerContainer?.style.display === 'flex';
+        const show = !isVisible;
+
+        // Show/hide managers
+        if (managerContainer) {
+            managerContainer.style.display = show ? 'flex' : 'none';
+        }
+
+        if (managerConnector) {
+            managerConnector.style.display = show ? 'block' : 'none';
+        }
+
+        // Show/hide department horizontal line
+        if (deptHorizontalLine) {
+            deptHorizontalLine.style.display = show ? 'block' : 'none';
+        }
+
+        // Hide team leads and executives when collapsing department
+        if (!show) {
+            wrapper.querySelectorAll('.tl-horizontal-container').forEach(tlContainer => {
+                tlContainer.style.display = 'none';
+            });
+
+            wrapper.querySelectorAll('.manager-vertical-connector').forEach(connector => {
+                connector.style.display = 'none';
+            });
+
+            wrapper.querySelectorAll('.executive-container').forEach(el => el.style.display = 'none');
+            wrapper.querySelectorAll('.tl-vertical-connector').forEach(el => el.style.display = 'none');
+        }
+    } else {
+        alert("You are not authorized to view other departments.");
+    }
+}
+
+
+// Toggle team leads for a manager
+function toggleTeamLeads(managerNode) {
+    const managerId = managerNode.getAttribute('data-manager-id');
+    const container = managerNode.closest('.manager-block');
+
+    const tlContainer = container.querySelector(`.tl-horizontal-container[data-manager-id="${managerId}"]`);
+    const connector = container.querySelector(`.manager-vertical-connector[data-manager-id="${managerId}"]`);
+
+    const isVisible = tlContainer?.style.display === 'flex';
+    if (tlContainer) tlContainer.style.display = isVisible ? 'none' : 'flex';
+    if (connector) connector.style.display = isVisible ? 'none' : 'block';
+
+    // Hide execs and vertical connectors
+    container.querySelectorAll('.executive-container').forEach(e => e.style.display = 'none');
+    container.querySelectorAll('.tl-vertical-connector').forEach(e => e.style.display = 'none');
+}
+
+// Toggle executives for a team lead
+function toggleExecutives(teamLeadNode) {
+    const tlId = teamLeadNode.getAttribute('data-tl-id');
+    const column = teamLeadNode.closest('.tl-column');
+    
+    // Find executive container and connector for this team lead
+    const executiveContainer = column.querySelector(`.executive-container[data-tl-id="${tlId}"]`);
+    const verticalConnector = column.querySelector(`.tl-vertical-connector[data-tl-id="${tlId}"]`);
+    
+    if (executiveContainer) {
+        const isVisible = executiveContainer.style.display === 'flex';
+        executiveContainer.style.display = isVisible ? 'none' : 'flex';
+        verticalConnector.style.display = isVisible ? 'none' : 'block';
+    }
+    
+    // Show all executive connectors in this container
+    if (executiveContainer && executiveContainer.style.display === 'flex') {
+        executiveContainer.querySelectorAll('.executive-connector').forEach(connector => {
+            connector.style.display = 'block';
+        });
+    }
+}
+
+// Initialize on document ready - UPDATED
+document.addEventListener('DOMContentLoaded', function() {
+    // Run debug function to log structure
+    debugDataStructure();
+    
+    // Adjust horizontal line width based on number of managers for departments
+    const departments = document.querySelectorAll('.department-wrapper');
+    departments.forEach(dept => {
+        const deptId = dept.querySelector('[data-role="department"]').getAttribute('data-dept-id');
+        const managers = dept.querySelectorAll(`.manager-container[data-dept-id="${deptId}"] .manager-block`);
+        
+        if (managers.length > 0) {
+            const deptLine = dept.querySelector(`.dept-horizontal-line[data-dept-id="${deptId}"]`);
+            if (deptLine) {
+                const width = Math.max(140, (managers.length * 160) + ((managers.length - 1) * 34));
+                deptLine.style.width = width + 'px';
+            }
+        }
+        
+        // Adjust team lead horizontal lines
+        const tlContainers = dept.querySelectorAll('.tl-horizontal-container');
+        tlContainers.forEach(tlContainer => {
+            const tlRow = tlContainer.querySelector('.tl-row');
+            if (tlRow) {
+                const tlColumns = tlRow.querySelectorAll('.tl-column');
+                if (tlColumns.length > 0) {
+                    const hlLine = tlContainer.querySelector('.tl-horizontal-line');
+                    if (hlLine) {
+                        const width = Math.max(70, (tlColumns.length * 160) + ((tlColumns.length - 1) * 15));
+                        hlLine.style.width = width + 'px';
                     }
                 }
-            });
+            }
         });
     });
+});
 
-    // Add keyboard shortcut to toggle debug panel
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'd' && e.ctrlKey) {
-            const debugInfo = document.getElementById('debugInfo');
-            if (debugInfo) {
-                debugInfo.style.display = (debugInfo.style.display === 'block') ? 'none' : 'block';
-            }
+// Add keyboard shortcut to toggle debug panel
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'd' && e.ctrlKey) {
+        const debugInfo = document.getElementById('debugInfo');
+        if (debugInfo) {
+            debugInfo.style.display = (debugInfo.style.display === 'block') ? 'none' : 'block';
         }
-    });
+    }
+});
 </script>
