@@ -429,7 +429,7 @@ namespace WLSPL_CRM_2.Controllers
             }
             if (result > 0)
             {
-                var obj = await _UserRepo.GetUserById(ID.ToString());
+                var obj = await _UserRepo.GetUserById(ID.ToString());   
                 if (obj.IsApproved == true && obj.IsActive == true)
                 {
                     string emailBody = $"<!DOCTYPE html><html><head><meta charset=\"UTF-8\"><title>Profile Activated</title><style>body{{font-family:Arial,sans-serif;background-color:#f4f6f9;color:#333;padding:20px;}}.container{{background-color:#ffffff;padding:25px;border-radius:6px;box-shadow:0px 0px 8px rgba(0,0,0,0.1);max-width:600px;margin:auto;}}.header{{text-align:center;padding-bottom:20px;color:#28a745;}}.message{{font-size:18px;margin:20px 0;text-align:center;}}.footer{{font-size:12px;color:#888;margin-top:30px;text-align:center;}}</style></head><body><div class=\"container\"><h2 class=\"header\">Profile Activated Successfully</h2><p class=\"message\">Hello {obj.FirstName + " " + obj.LastName},</p><p class=\"message\">Your profile has been successfully activated. You can now log in and start using our services.</p><p class=\"message\">If you have any questions, feel free to contact our support team (Mobile No.- +91 93565 49427).</p><p>Thanks,<br><div class=\"brand\"><a href=\"https://www.weblinkservices.net\" class=\"logo\"><span><img src=\"https://www.weblinkservices.net/assets-web/logo-main.png\" alt=\"logo-small\" class=\"logo-sm\"></span></a></div></p><div class=\"footer\">This is an automated message. Please do not reply to this email.</div></div></body></html>";
