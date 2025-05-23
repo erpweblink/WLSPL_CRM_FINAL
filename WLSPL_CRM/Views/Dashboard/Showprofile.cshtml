@@ -42,7 +42,18 @@
 <div class="container mt-4">
 	<div class="card">
 		<div class="card-header text-white" style="background-color:#ff0000">
-			<h5 class="mb-0">Profile Page</h5>
+			<div class="row align-items-center">
+				<div class="col-auto">
+					<h1 class="card-title" style="font-size: 32px !important;">Edit Application </h1>
+				</div>
+				<div class="col-auto ms-auto">
+					<a class="btn" style="border: 2px solid black;background: whitesmoke;color: red;"  asp-controller="Dashboard" asp-action="Index">
+						<div class="d-flex align-items-center">
+							<span class="nav-link-text"> Back </span>
+						</div>
+					</a>
+				</div>
+			</div>  
 		</div>
 		<div class="card-body">
 			<form asp-controller="User" asp-action="Updateuser" method="post" enctype="multipart/form-data">
