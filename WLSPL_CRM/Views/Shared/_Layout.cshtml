@@ -81,7 +81,8 @@
 
                 <ul class="topbar-item list-unstyled d-inline-flex align-items-center mb-0">
                     <li>
-
+                    <button class="nav-link mobile-menu-btn nav-icon" id="togglemenu">
+							<i class="iconoir-menu-scale"></i>
                     </li>
 
                     <li class="mx-3 welcome-text" style="padding-left: -223px;">
@@ -123,7 +124,7 @@
 						                        <h6 class="my-0 fw-medium text-dark fs-13">@Context.Session.GetString("FullName")</h6>
 						                        <small class="text-muted mb-0">@Context.Session.GetString("Department")</small>
 					                        </div><!--end media-body-->
-				</div>
+				         </div>
                             <div class="dropdown-divider mt-0"></div>
                             <small class="text-muted px-2 pb-1 d-block">Account</small>
                             <a class="dropdown-item" href="/Dashboard/ShowProfile"><i class="las la-user fs-18 me-1 align-text-bottom"></i> Profile</a>
@@ -147,9 +148,15 @@
     <div class="startbar d-print-none">
         <!-- Start brand -->
         <div class="brand d-flex justify-content-between align-items-center px-3 py-2">
-            <a href="index.html" class="logo">
-                <img src="~/assets/images/WLSPL_MAIN_LOGO.png" alt="logo-small" class="logo-sm">
-            </a>
+           <a href="#" class="logo">
+				<span>
+					<img src="~/assets/wlsplimage/logo-sm.png" alt="logo-small" class="logo-sm" style="margin-left: -21px;">
+				</span>
+				<span class="">
+					<img src="~/assets/wlsplimage/logo-light.png" alt="logo-large" class="logo-lg logo-light" style="height: 50px;">
+					<img src="~/assets/wlsplimage/logo-dark.png" alt="logo-large" class="logo-lg logo-dark" style="height: 50px;">
+				</span>
+</a>
 
             <!-- Sidebar toggle button (for mobile view) -->
             <button class="btn btn-sm d-lg-none" type="button" data-bs-toggle="collapse" data-bs-target="#startbarCollapse" aria-controls="startbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -164,6 +171,14 @@
                     <!-- Navigation -->
 
                     <ul class="navbar-nav mb-auto w-100">
+                     <li class="nav-item">
+                       <div class="nav-item ">
+                                    <a class="nav-link" asp-controller="Dashboard" asp-action="Index">
+                                        <i class="iconoir-dashboard-speed menu-icon"></i>
+                                        <span>Dashboard</span>
+                                    </a>
+                             </div>
+                      </li>
                         <li class="nav-item">
                             <a class="nav-link" href="#sidebarDashboards" data-bs-toggle="collapse" role="button"
                                aria-expanded="false" aria-controls="sidebarDashboards">
@@ -200,8 +215,6 @@
                                                 <div class="d-flex align-items-center"><span class="nav-link-text">Prospect</span></div>
                                             </a>
                                         </li>
-
-
                                     }
 
                                 </ul>
@@ -222,13 +235,11 @@
                                         </a>
                                     </li>
 
-
                                     <li class="nav-item">
                                         <a class="nav-link" asp-controller="Proforma" asp-action="Index">
                                             <div class="d-flex align-items-center"><span class="nav-link-text">Proforma</span></div>
                                         </a>
                                     </li>
-
 
                                     <li class="nav-item">
                                         <a class="nav-link" asp-controller="Workorder" asp-action="Getworkorderlist">
@@ -253,9 +264,6 @@
                                             <div class="d-flex align-items-center"><span class="nav-link-text">Packages</span></div>
                                         </a>
                                     </li>
-
-
-
                                 </ul><!--end nav-->
                             </div><!--end startbarApplications-->
                         </li><!--end nav-item-->
@@ -299,14 +307,6 @@
                                             <div class="d-flex align-items-center"><span class="nav-link-text">Recruitment</span></div>
                                         </a>
                                     </li>
-
-
-
-
-
-
-
-
                                 </ul><!--end nav-->
                             </div><!--end startbarApplications-->
                         </li><!--end nav-item-->
@@ -322,7 +322,6 @@
     <!-- end leftbar-tab-menu-->
 
     <div class="page-wrapper">
-
         <!-- Page Content-->
         <div class="page-content">
             <div class="container-xxl">

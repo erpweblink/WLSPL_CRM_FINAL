@@ -166,6 +166,10 @@ namespace WLSPL_CRM_2.Controllers
                 {
                     result = await _UserRepo.UpdateDeatils(userRole, userdepartment, ID, IsApprove, IsActivated, teamLead);
                 }
+                if (subAdmin == null && Manager == null && teamLead == null)
+                {
+                    result = await _UserRepo.UpdateDeatils(userRole, userdepartment, ID, IsApprove, IsActivated, null);
+                }
                 if (result > 0)
                 {
                     TempData["Save_Record"] = "User Updated Successfully.";
@@ -426,6 +430,10 @@ namespace WLSPL_CRM_2.Controllers
             if (Manager != null && teamLead != null)
             {
                 result = await _UserRepo.UpdateDeatils(userRole, userdepartment, ID, IsApprove, IsActivated, teamLead);
+            }
+            if (subAdmin == null && Manager == null && teamLead == null)
+            {
+                result = await _UserRepo.UpdateDeatils(userRole, userdepartment, ID, IsApprove, IsActivated, null);
             }
             if (result > 0)
             {
