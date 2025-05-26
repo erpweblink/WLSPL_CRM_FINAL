@@ -7,9 +7,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<style>
+<style>  
     /* Reset and base styles */
-    * { 
+/*     * { 
         box-sizing: border-box; 
         margin: 0;
         padding: 0;
@@ -20,7 +20,7 @@
         background-color: #f0f0f0;
         padding: 20px;
         min-height: 100vh;
-    }
+    } */
 
     /* Main tree container */
     .tree {
@@ -112,7 +112,7 @@
     position: relative;
     margin: 0 5px;   /* Minimal 5px on each side = 10px total between cards */
     min-width: auto;
-}
+   }
 
     /* Department horizontal line - FIXED */
     .dept-horizontal-line {
@@ -287,6 +287,26 @@
         border-style: dashed;
         opacity: 0.7;
     }
+    [data-bs-theme="dark"] .body {
+        background-color: #1a1a1a;
+        color: white;
+        border-color: #4caf50; 
+        box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1); 
+    }
+     [data-bs-theme="dark"] .node {
+        color: whitesmoke;
+        border-color: #e31e24; 
+        box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1); 
+        background-color:#202221 !important;
+    }
+   /*  [data-bs-theme="dark"] .welcome-text h3 {
+        color: black !important;
+    } */
+   /*  [data-bs-theme="dark"] .container-xxl #topbar-custom {
+        background-color: var(--bs-body-bg) !important;
+         transition: .3s !important;
+    } */
+
 </style>
 
 @functions {
